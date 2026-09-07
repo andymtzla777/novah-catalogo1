@@ -1,0 +1,2757 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Novah — Camisetas de fútbol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12241c;
+    --paper:#f5f2ea;
+    --paper-2:#ece7d9;
+    --gold:#c8992e;
+    --pitch:#1f5c40;
+    --pitch-deep:#123527;
+    --line: rgba(18,36,28,0.14);
+    --muted:#5c6d63;
+    --white:#fffdf8;
+    --danger:#b0392c;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3, .num{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    letter-spacing:0.01em;
+  }
+  button{ font-family:inherit; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    background:
+      radial-gradient(ellipse at 50% 35%, #3f8f53 0%, #2c6f42 42%, #1d5233 78%, #12381f 100%);
+    color:var(--white);
+    overflow:hidden;
+    padding:64px 24px 56px;
+  }
+  .hero-inner{
+    max-width:1120px;
+    margin:0 auto;
+    position:relative;
+    z-index:2;
+  }
+  .pitch-bg{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+  }
+  .pitch-bg .chalk{
+    stroke:rgba(255,253,248,0.4);
+    stroke-width:2.5;
+    stroke-linecap:round;
+    fill:none;
+  }
+  .pitch-bg .chalk-x{
+    stroke:rgba(255,253,248,0.42);
+    stroke-width:2.5;
+    stroke-linecap:round;
+  }
+  .pitch-bg .chalk-o{
+    stroke:rgba(255,253,248,0.4);
+    stroke-width:2.5;
+    fill:none;
+  }
+  .pitch-bg .chalk-dash{
+    stroke:rgba(255,253,248,0.32);
+    stroke-width:2.5;
+    stroke-linecap:round;
+    fill:none;
+    stroke-dasharray:7 8;
+  }
+  .pitch-bg .corner{
+    stroke:rgba(255,253,248,0.3);
+    stroke-width:2;
+    fill:none;
+  }
+  .brand-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:28px;
+    flex-wrap:wrap;
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+  }
+  .brand-mark{
+    width:14px;height:14px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    flex:none;
+  }
+  .brand-name{
+    font-size:22px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    font-weight:600;
+    font-family:'Work Sans', sans-serif;
+  }
+  .ig-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,253,248,0.1);
+    border:1px solid rgba(255,253,248,0.25);
+    color:var(--white);
+    text-decoration:none;
+    font-size:13px;
+    font-weight:600;
+    padding:9px 16px;
+    border-radius:100px;
+    transition:background .15s ease;
+  }
+  .ig-btn:hover{ background:rgba(255,253,248,0.2); }
+  .ig-btn svg{ width:15px; height:15px; fill:currentColor; }
+  .hero h1{
+    font-size:clamp(40px, 7vw, 76px);
+    line-height:0.98;
+    margin:0 0 18px;
+    max-width:760px;
+  }
+  .hero p{
+    font-size:17px;
+    color:rgba(255,253,248,0.72);
+    max-width:460px;
+    line-height:1.55;
+    margin:0 0 30px;
+  }
+  .hero-stats{
+    display:flex;
+    gap:36px;
+    flex-wrap:wrap;
+  }
+  .hero-stats div strong{
+    display:block;
+    font-family:'Anton', sans-serif;
+    font-size:28px;
+    color:var(--gold);
+  }
+  .hero-stats div span{
+    font-size:13px;
+    color:rgba(255,253,248,0.6);
+  }
+
+  /* ---------- NAV / FILTERS ---------- */
+  .controls{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+    padding:18px 24px;
+  }
+  .controls-inner{
+    max-width:1120px;
+    margin:0 auto;
+  }
+  .tabs-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+  }
+  .tabs{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .tab{
+    appearance:none;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
+    font-weight:600;
+    font-size:14px;
+    padding:9px 18px;
+    border-radius:100px;
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .tab:hover{ border-color:var(--pitch); }
+  .tab.active{
+    background:var(--pitch-deep);
+    border-color:var(--pitch-deep);
+    color:var(--white);
+  }
+  .edit-toggle{
+    appearance:none;
+    border:1px solid var(--pitch);
+    background:var(--white);
+    color:var(--pitch);
+    font-weight:700;
+    font-size:13px;
+    padding:9px 16px;
+    border-radius:100px;
+    cursor:pointer;
+    white-space:nowrap;
+    display:none;
+  }
+  .edit-toggle.on{
+    background:var(--pitch);
+    color:var(--white);
+    display:inline-flex;
+  }
+  /* Disparador secreto: el logo se toca varias veces para abrir el modo edición */
+  .brand{ cursor:default; -webkit-tap-highlight-color:transparent; user-select:none; }
+  .subtabs{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .subtabs span.lbl{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--muted);
+    margin-right:6px;
+  }
+  .subtab{
+    appearance:none;
+    border:none;
+    background:var(--paper-2);
+    color:var(--ink);
+    font-weight:500;
+    font-size:13px;
+    padding:7px 14px;
+    border-radius:6px;
+    cursor:pointer;
+  }
+  .subtab.active{
+    background:var(--gold);
+    color:var(--pitch-deep);
+    font-weight:700;
+  }
+  .subtabs.hidden{ display:none; }
+
+  /* ---------- GRID ---------- */
+  main{
+    max-width:1120px;
+    margin:0 auto;
+    padding:40px 24px 90px;
+  }
+  .section-title{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:22px;
+  }
+  .section-title h2{
+    font-size:26px;
+    margin:0;
+  }
+  .section-title .count{
+    font-size:13px;
+    color:var(--muted);
+  }
+  .quote-box{
+    position:relative;
+    background:var(--pitch-deep);
+    color:var(--white);
+    border-radius:8px;
+    padding:22px 24px 20px 52px;
+    margin-bottom:26px;
+    min-height:34px;
+  }
+  .quote-mark{
+    position:absolute;
+    top:18px;
+    left:18px;
+    width:20px;
+    height:20px;
+    fill:var(--gold);
+    opacity:0.9;
+  }
+  .quote-text{
+    margin:0 0 6px;
+    font-size:16px;
+    line-height:1.45;
+    font-style:italic;
+    color:var(--white);
+    opacity:0;
+    transform:translateY(4px);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .quote-text.show{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .quote-author{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    color:var(--gold);
+    text-transform:uppercase;
+    opacity:0;
+    transition:opacity .5s ease;
+  }
+  .quote-author.show{ opacity:1; }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
+    gap:20px;
+  }
+  .card{
+    position:relative;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .jersey{
+    position:relative;
+    aspect-ratio:1/1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--paper-2);
+    overflow:hidden;
+  }
+  .jersey svg{ width:64%; height:64%; }
+  .jersey img{ width:100%; height:100%; object-fit:cover; }
+  .tag{
+    position:absolute;
+    top:10px;
+    left:10px;
+    background:var(--pitch-deep);
+    color:var(--white);
+    font-size:10px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:4px 8px;
+    border-radius:100px;
+  }
+  .card-edit-actions{
+    position:absolute;
+    top:8px;
+    left:8px;
+    right:8px;
+    display:flex;
+    justify-content:space-between;
+    z-index:5;
+  }
+  .icon-btn{
+    height:30px;
+    padding:0 12px;
+    border-radius:100px;
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    cursor:pointer;
+    background:rgba(255,253,248,0.95);
+    color:var(--ink);
+    font-size:12px;
+    font-weight:700;
+    box-shadow:0 1px 4px rgba(0,0,0,0.18);
+  }
+  .icon-btn.danger{ background:var(--danger); color:var(--white); }
+  .icon-btn svg{ width:13px; height:13px; fill:currentColor; }
+  .card-body{
+    padding:14px 16px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    flex:1;
+  }
+  .card-body h3{
+    font-weight:700;
+    font-size:15px;
+    margin:0;
+    line-height:1.3;
+  }
+  .card-body .meta{
+    font-size:12px;
+    color:var(--muted);
+  }
+  .price-row{
+    margin-top:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .price{
+    font-family:'Anton', sans-serif;
+    font-size:19px;
+  }
+  .wa-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--pitch);
+    color:var(--white);
+    text-decoration:none;
+    font-size:12px;
+    font-weight:600;
+    padding:9px 12px;
+    border-radius:100px;
+    white-space:nowrap;
+    transition:background .15s ease;
+  }
+  .wa-btn:hover{ background:var(--pitch-deep); }
+  .wa-btn svg{ width:13px; height:13px; fill:currentColor; }
+
+  .add-card{
+    border:2px dashed var(--line);
+    background:transparent;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:220px;
+    cursor:pointer;
+    color:var(--muted);
+    font-weight:600;
+    flex-direction:column;
+    gap:8px;
+    border-radius:4px;
+  }
+  .add-card:hover{ border-color:var(--pitch); color:var(--pitch); }
+  .add-card svg{ width:26px; height:26px; fill:currentColor; }
+
+  .empty{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--muted);
+  }
+
+  footer{
+    background:var(--pitch-deep);
+    color:rgba(255,253,248,0.6);
+    text-align:center;
+    padding:26px;
+    font-size:13px;
+  }
+  footer strong{ color:var(--white); }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(18,36,28,0.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+    padding:20px;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{
+    background:var(--white);
+    width:100%;
+    max-width:440px;
+    max-height:90vh;
+    overflow-y:auto;
+    border-radius:8px;
+    padding:26px;
+  }
+  .modal h3{
+    font-family:'Work Sans', sans-serif;
+    font-weight:700;
+    font-size:18px;
+    margin:0 0 18px;
+  }
+  .field{
+    margin-bottom:14px;
+  }
+  .field label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  .field input[type=text], .field input[type=number], .field select{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:14px;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  .field input[type=file]{ font-size:13px; }
+  .img-preview{
+    width:100%;
+    aspect-ratio:1/1;
+    max-width:140px;
+    border-radius:6px;
+    background:var(--paper-2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    margin-bottom:10px;
+    color:var(--muted);
+    font-size:12px;
+  }
+  .img-preview img{ width:100%; height:100%; object-fit:cover; }
+  .modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+  }
+  .btn{
+    flex:1;
+    padding:11px;
+    border-radius:6px;
+    border:none;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .btn-primary{ background:var(--pitch); color:var(--white); }
+  .btn-secondary{ background:var(--paper-2); color:var(--ink); }
+  .save-note{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:12px;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:24px;
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--ink);
+    color:var(--white);
+    padding:12px 20px;
+    border-radius:100px;
+    font-size:13px;
+    font-weight:600;
+    z-index:200;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+  .small-modal{
+    background:var(--white);
+    width:100%;
+    max-width:340px;
+    border-radius:8px;
+    padding:24px;
+  }
+  .small-modal p{
+    font-size:14px;
+    color:var(--ink);
+    margin:0 0 16px;
+    line-height:1.5;
+  }
+  .small-modal input[type=password]{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:14px;
+    background:var(--paper);
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+  .field-error{
+    font-size:12px;
+    color:var(--danger);
+    min-height:16px;
+    margin-bottom:10px;
+  }
+
+  @media (max-width:560px){
+    .hero{ padding:48px 18px 42px; }
+    .controls{ padding:14px 18px; }
+    main{ padding:30px 18px 70px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <svg class="pitch-bg" viewBox="0 0 1200 600" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="chalkGrain" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="noise"/>
+        <feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0"/>
+      </filter>
+      <filter id="chalkRough" x="-30%" y="-30%" width="160%" height="160%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="3"/>
+      </filter>
+    </defs>
+    <rect width="1200" height="600" filter="url(#chalkGrain)"/>
+
+    <!-- media cancha con círculo central -->
+    <line class="chalk" x1="600" y1="20" x2="600" y2="580" filter="url(#chalkRough)"/>
+    <circle class="chalk-o" cx="600" cy="300" r="80" filter="url(#chalkRough)"/>
+    <circle class="chalk" cx="600" cy="300" r="3" filter="url(#chalkRough)"/>
+
+    <!-- esquinas tipo pizarra táctica -->
+    <path class="corner" d="M40,30 A18,18 0 0 1 58,48" filter="url(#chalkRough)"/>
+    <path class="corner" d="M1160,30 A18,18 0 0 0 1142,48" filter="url(#chalkRough)"/>
+    <path class="corner" d="M40,570 A18,18 0 0 0 58,552" filter="url(#chalkRough)"/>
+    <path class="corner" d="M1160,570 A18,18 0 0 1 1142,552" filter="url(#chalkRough)"/>
+
+    <!-- jugadas: flechas curvas punteadas -->
+    <path class="chalk-dash" d="M760,150 Q860,110 950,160" filter="url(#chalkRough)"/>
+    <path class="chalk-dash" d="M840,220 Q880,300 850,380" filter="url(#chalkRough)"/>
+    <path class="chalk-dash" d="M700,420 Q800,460 900,400" filter="url(#chalkRough)"/>
+    <path class="chalk" d="M950,330 L1010,270" filter="url(#chalkRough)"/>
+    <path class="chalk" d="M1005,265 l14,-3 l-3,14" filter="url(#chalkRough)"/>
+    <path class="chalk" d="M955,165 l14,4 l-9,12" filter="url(#chalkRough)"/>
+
+    <!-- X y O de jugadores dispersos -->
+    <g class="chalk-x" filter="url(#chalkRough)">
+      <path d="M700,120 l16,16 M716,120 l-16,16"/>
+      <path d="M1020,110 l16,16 M1036,110 l-16,16"/>
+      <path d="M1080,240 l16,16 M1096,240 l-16,16"/>
+      <path d="M950,400 l16,16 M966,400 l-16,16"/>
+      <path d="M1090,480 l16,16 M1106,480 l-16,16"/>
+      <path d="M760,470 l16,16 M776,470 l-16,16"/>
+    </g>
+    <g filter="url(#chalkRough)">
+      <circle class="chalk-o" cx="880" cy="90" r="11"/>
+      <circle class="chalk-o" cx="1120" cy="170" r="11"/>
+      <circle class="chalk-o" cx="1000" cy="470" r="11"/>
+      <circle class="chalk-o" cx="820" cy="330" r="11"/>
+    </g>
+  </svg>
+  <div class="hero-inner">
+    <div class="brand-row">
+      <div class="brand" id="brand-trigger">
+        <div class="brand-mark"></div>
+        <div class="brand-name">Novah</div>
+      </div>
+      <a class="ig-btn" href="https://instagram.com/novah.cl" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.148 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-10.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        @novah.cl
+      </a>
+    </div>
+    <h1>Camisetas de fútbol,<br>de cualquier época.</h1>
+    <p>Retro, actuales, temporadas pasadas y selecciones. Elige tu camiseta y arma tu pedido directo por WhatsApp.</p>
+    <div class="hero-stats">
+      <div><strong id="stat-total">0</strong><span>Camisetas</span></div>
+      <div><strong>4</strong><span>Colecciones</span></div>
+      <div><strong>3</strong><span>Regiones</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="controls-inner">
+    <div class="tabs-row">
+      <div class="tabs" id="tabs"></div>
+      <div style="display:flex; gap:8px;">
+        <button class="edit-toggle hidden" id="change-pass-btn" style="display:none;">Cambiar contraseña</button>
+        <button class="edit-toggle" id="edit-toggle">Salir de edición</button>
+      </div>
+    </div>
+    <div class="subtabs" id="subtabs"></div>
+  </div>
+</div>
+
+<main>
+  <div class="section-title">
+    <h2 id="section-heading">Retro</h2>
+    <span class="count" id="section-count"></span>
+  </div>
+  <div class="quote-box" id="quote-box">
+    <svg class="quote-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.17 6C4.87 8.13 3.5 10.87 3.5 14c0 3.03 2.05 5 4.5 5 2.21 0 4-1.79 4-4 0-2.03-1.5-3.71-3.44-3.96C8.9 9.6 10.13 8 12.5 6.5L10 4.5C9 5 8 5.5 7.17 6zm10 0C14.87 8.13 13.5 10.87 13.5 14c0 3.03 2.05 5 4.5 5 2.21 0 4-1.79 4-4 0-2.03-1.5-3.71-3.44-3.96C18.9 9.6 20.13 8 22.5 6.5L20 4.5c-1 .5-2 1-2.83 1.5z"/></svg>
+    <p class="quote-text" id="quote-text"></p>
+    <span class="quote-author" id="quote-author"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none;">No hay camisetas en esta categoría todavía.</div>
+</main>
+
+<footer>
+  Pedidos por WhatsApp · <strong>Novah</strong> © 2026
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">Agregar camiseta</h3>
+    <div class="img-preview" id="img-preview">Sin foto</div>
+    <div class="field">
+      <label>Foto</label>
+      <input type="file" id="f-image" accept="image/*">
+    </div>
+    <div class="field">
+      <label>Nombre</label>
+      <input type="text" id="f-name" placeholder="Ej. Real Madrid 25/26 Local">
+    </div>
+    <div class="field">
+      <label>Detalle (temporada, tallas, etc.)</label>
+      <input type="text" id="f-meta" placeholder="Ej. Temporada actual · Talla S-XL">
+    </div>
+    <div class="field">
+      <label>Precio (MXN)</label>
+      <input type="number" id="f-price" placeholder="999">
+    </div>
+    <div class="field">
+      <label>Colección</label>
+      <select id="f-cat">
+        <option value="retro">Retro</option>
+        <option value="actuales">Actuales</option>
+        <option value="temporadas">Temporadas pasadas</option>
+        <option value="selecciones">Selecciones</option>
+      </select>
+    </div>
+    <div class="field" id="f-region-wrap">
+      <label>Región</label>
+      <select id="f-region">
+        <option value="europa">Europa</option>
+        <option value="america">América</option>
+        <option value="otros">Otros</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="modal-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="modal-save">Guardar</button>
+    </div>
+    <button class="btn" id="modal-delete" style="display:none; width:100%; margin-top:10px; background:transparent; color:var(--danger); border:1px solid var(--danger);">Eliminar esta camiseta</button>
+    <div class="save-note">Los cambios se guardan automáticamente y los verá cualquiera que abra este catálogo.</div>
+  </div>
+</div>
+
+<!-- PASSCODE MODAL -->
+<div class="modal-overlay" id="pass-overlay">
+  <div class="small-modal">
+    <h3 style="margin:0 0 12px; font-size:17px;">Modo edición</h3>
+    <p>Escribe la contraseña para poder editar el catálogo.</p>
+    <input type="password" id="pass-input" placeholder="Contraseña">
+    <div class="field-error" id="pass-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="pass-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="pass-submit">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- SECURITY QUESTION MODAL (2FA) -->
+<div class="modal-overlay" id="secq-overlay">
+  <div class="small-modal">
+    <h3 style="margin:0 0 12px; font-size:17px;">Verificación adicional</h3>
+    <p>¿Cuál es tu dorsal de la prepa?</p>
+    <input type="text" id="secq-input" placeholder="Respuesta" autocomplete="off">
+    <div class="field-error" id="secq-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="secq-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="secq-submit">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="changepass-overlay">
+  <div class="small-modal">
+    <h3 style="margin:0 0 12px; font-size:17px;">Cambiar contraseña</h3>
+    <p>Define una nueva contraseña para entrar al modo edición.</p>
+    <input type="password" id="newpass-input" placeholder="Nueva contraseña">
+    <input type="password" id="newpass-confirm" placeholder="Confirma la nueva contraseña" style="margin-top:8px;">
+    <div class="field-error" id="changepass-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="changepass-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="changepass-submit">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-overlay">
+  <div class="small-modal">
+    <h3 style="margin:0 0 12px; font-size:17px;">Eliminar camiseta</h3>
+    <p id="confirm-message">¿Eliminar esta camiseta del catálogo?</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="confirm-cancel">Cancelar</button>
+      <button class="btn btn-primary" style="background:var(--danger);" id="confirm-ok">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const WHATSAPP_NUMBER = "5586760070";
+  const STORAGE_KEY = "novah-products";
+  const PASSCODE_KEY = "novah-passcode";
+  let EDIT_PASSCODE = "novah2026";
+
+  const CATEGORIES = [
+    { id: "retro", label: "Retro", hasRegions: true },
+    { id: "actuales", label: "Actuales", hasRegions: true },
+    { id: "temporadas", label: "Temporadas pasadas", hasRegions: true },
+    { id: "selecciones", label: "Selecciones", hasRegions: false },
+  ];
+  const REGIONS = [
+    { id: "europa", label: "Europa" },
+    { id: "america", label: "América" },
+    { id: "otros", label: "Otros" },
+  ];
+
+  function jersey(primary, secondary, stripes, number){
+    const stripeEls = stripes ? `
+      <rect x="20" y="10" width="10" height="80" fill="${secondary}" />
+      <rect x="70" y="10" width="10" height="80" fill="${secondary}" />
+    ` : '';
+    return `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M30 8 L10 22 L18 34 L28 28 L28 92 L72 92 L72 28 L82 34 L90 22 L70 8 L58 16 L42 16 Z" fill="${primary}" stroke="${secondary}" stroke-width="2"/>
+      ${stripeEls}
+      <text x="50" y="62" font-family="Anton, sans-serif" font-size="26" fill="${secondary}" text-anchor="middle">${number}</text>
+    </svg>`;
+  }
+
+  const DEFAULT_PRODUCTS = [
+    { id:"p1", cat:"retro", region:"europa", name:"AC Milano '94 Local", meta:"Retro · Talla S–XL", price:899, colors:["#c8102e","#0a0a0a"], num:"9" },
+    { id:"p2", cat:"retro", region:"europa", name:"Manchester Reds '99 Visitante", meta:"Retro · Talla S–XL", price:949, colors:["#f5f1e8","#1a1a1a"], num:"7" },
+    { id:"p3", cat:"retro", region:"europa", name:"Barça Blaugrana '92", meta:"Retro · Talla S–XL", price:929, colors:["#a50044","#004d98"], num:"10", stripes:true },
+    { id:"p4", cat:"retro", region:"america", name:"Xeneizes '81 Titular", meta:"Retro · Talla S–XL", price:869, colors:["#0a2f5c","#f2c230"], num:"5", stripes:true },
+    { id:"p5", cat:"retro", region:"america", name:"Millonarios '86 Local", meta:"Retro · Talla S–XL", price:889, colors:["#f5f1e8","#c8102e"], num:"11", stripes:true },
+    { id:"p6", cat:"retro", region:"america", name:"Tricolor Paulista '92", meta:"Retro · Talla S–XL", price:859, colors:["#f5f1e8","#c8102e"], num:"8" },
+    { id:"p7", cat:"retro", region:"otros", name:"Samurái Azul '98", meta:"Retro · Talla S–XL", price:919, colors:["#0033a0","#f5f1e8"], num:"10" },
+    { id:"p8", cat:"retro", region:"otros", name:"USA '94 Local", meta:"Retro · Talla S–XL", price:899, colors:["#f5f1e8","#a50044"], num:"9", stripes:true },
+    { id:"p9", cat:"actuales", region:"europa", name:"Merengue 25/26 Local", meta:"Temporada actual", price:1099, colors:["#f5f1e8","#c8992e"], num:"11" },
+    { id:"p10", cat:"actuales", region:"europa", name:"Bávaros 25/26 Local", meta:"Temporada actual", price:1079, colors:["#c8102e","#0a0a0a"], num:"9" },
+    { id:"p11", cat:"actuales", region:"europa", name:"Parisinos 25/26 Local", meta:"Temporada actual", price:1099, colors:["#0a2f5c","#c8102e"], num:"7", stripes:true },
+    { id:"p12", cat:"actuales", region:"america", name:"Mengão 25/26 Local", meta:"Temporada actual", price:1029, colors:["#c8102e","#0a0a0a"], num:"10", stripes:true },
+    { id:"p13", cat:"actuales", region:"america", name:"Verdão 25/26 Local", meta:"Temporada actual", price:1029, colors:["#1f5c40","#f5f1e8"], num:"9" },
+    { id:"p14", cat:"actuales", region:"america", name:"Rayados 25/26 Local", meta:"Temporada actual", price:989, colors:["#0a2f5c","#f5f1e8"], num:"22", stripes:true },
+    { id:"p15", cat:"actuales", region:"otros", name:"Al-Riyadh 25/26 Local", meta:"Temporada actual", price:1049, colors:["#f2c230","#0a2f5c"], num:"7" },
+    { id:"p16", cat:"actuales", region:"otros", name:"Diamantes Rojos 25/26", meta:"Temporada actual", price:989, colors:["#c8102e","#f5f1e8"], num:"14", stripes:true },
+    { id:"p17", cat:"temporadas", region:"europa", name:"Blues 2012 Champions", meta:"Temporada 2011–12", price:939, colors:["#034694","#f5f1e8"], num:"8" },
+    { id:"p18", cat:"temporadas", region:"europa", name:"Reds 2005 Estambul", meta:"Temporada 2004–05", price:959, colors:["#c8102e","#f5f1e8"], num:"5" },
+    { id:"p19", cat:"temporadas", region:"europa", name:"Nerazzurri 2010 Treble", meta:"Temporada 2009–10", price:949, colors:["#0a2f5c","#0a0a0a"], num:"9", stripes:true },
+    { id:"p20", cat:"temporadas", region:"america", name:"Timão 2012 Mundial", meta:"Temporada 2012", price:919, colors:["#f5f1e8","#0a0a0a"], num:"10" },
+    { id:"p21", cat:"temporadas", region:"america", name:"Rojo 2017 Sudamericana", meta:"Temporada 2017", price:889, colors:["#c8102e","#f5f1e8"], num:"11" },
+    { id:"p22", cat:"temporadas", region:"america", name:"Cementeros 2018 Local", meta:"Temporada 2018", price:899, colors:["#0033a0","#f5f1e8"], num:"7", stripes:true },
+    { id:"p23", cat:"temporadas", region:"otros", name:"Al Ain 2019 Local", meta:"Temporada 2018–19", price:909, colors:["#f2c230","#0a0a0a"], num:"9" },
+    { id:"p24", cat:"temporadas", region:"otros", name:"Ciervos 2016 Local", meta:"Temporada 2016", price:889, colors:["#c8102e","#0a0a0a"], num:"8", stripes:true },
+    { id:"p25", cat:"selecciones", region:null, name:"Albiceleste Local", meta:"Selección nacional", price:1149, colors:["#75aadb","#f5f1e8"], num:"10", stripes:true },
+    { id:"p26", cat:"selecciones", region:null, name:"Canarinha Local", meta:"Selección nacional", price:1149, colors:["#f2c230","#1f5c40"], num:"9" },
+    { id:"p27", cat:"selecciones", region:null, name:"El Tri Local", meta:"Selección nacional", price:1099, colors:["#1f5c40","#f5f1e8"], num:"11" },
+    { id:"p28", cat:"selecciones", region:null, name:"Les Bleus Local", meta:"Selección nacional", price:1099, colors:["#0a2f5c","#f5f1e8"], num:"7" },
+    { id:"p29", cat:"selecciones", region:null, name:"La Roja Local", meta:"Selección nacional", price:1049, colors:["#c8102e","#f2c230"], num:"8" },
+    { id:"p30", cat:"selecciones", region:null, name:"Die Mannschaft Local", meta:"Selección nacional", price:1099, colors:["#f5f1e8","#0a0a0a"], num:"13" },
+    { id:"p31", cat:"selecciones", region:null, name:"Samurái Azul Local", meta:"Selección nacional", price:1029, colors:["#0033a0","#f5f1e8"], num:"10" },
+    { id:"p32", cat:"selecciones", region:null, name:"La Celeste Local", meta:"Selección nacional", price:1029, colors:["#75aadb","#f5f1e8"], num:"9" },
+  ];
+
+  const QUOTES = [
+    { text: "La pelota no se mancha.", author: "Diego Maradona" },
+    { text: "Jugar al fútbol es muy sencillo, pero jugar un fútbol sencillo es lo más difícil que hay.", author: "Johan Cruyff" },
+    { text: "Ningún jugador es tan bueno como todos juntos.", author: "Alfredo Di Stéfano" },
+    { text: "El fútbol es el deporte más hermoso y sencillo del mundo.", author: "Jorge Valdano" },
+    { text: "Si hubiera nacido feo, nunca habríais oído hablar de Pelé.", author: "George Best" },
+    { text: "Llegué como una leyenda, me voy como una leyenda.", author: "Zlatan Ibrahimović" },
+    { text: "El éxito no es un accidente, es trabajo duro y perseverancia.", author: "Pelé" },
+    { text: "Si se cree y se trabaja, se puede.", author: "Diego Simeone" },
+    { text: "No vine a ser uno más, vine a dejar huella.", author: "Neymar Jr." },
+    { text: "Salid y disfrutad.", author: "Johan Cruyff" },
+  ];
+  let quoteIndex = 0;
+  let quoteTimer = null;
+
+  function renderQuote(){
+    const q = QUOTES[quoteIndex];
+    const textEl = document.getElementById("quote-text");
+    const authorEl = document.getElementById("quote-author");
+    textEl.classList.remove("show");
+    authorEl.classList.remove("show");
+    setTimeout(()=>{
+      textEl.textContent = `“${q.text}”`;
+      authorEl.textContent = q.author;
+      textEl.classList.add("show");
+      authorEl.classList.add("show");
+    }, 220);
+  }
+
+  function startQuoteRotation(){
+    renderQuote();
+    quoteTimer = setInterval(()=>{
+      quoteIndex = (quoteIndex + 1) % QUOTES.length;
+      renderQuote();
+    }, 10000);
+  }
+
+  let PRODUCTS = [];
+  let activeCat = "retro";
+  let activeRegion = "europa";
+  let editMode = false;
+  let editingId = null;
+  let pendingImage = null;
+
+  const tabsEl = document.getElementById("tabs");
+  const subtabsEl = document.getElementById("subtabs");
+  const gridEl = document.getElementById("grid");
+  const headingEl = document.getElementById("section-heading");
+  const countEl = document.getElementById("section-count");
+  const emptyEl = document.getElementById("empty");
+  const editToggle = document.getElementById("edit-toggle");
+  const passOverlay = document.getElementById("pass-overlay");
+  const passInput = document.getElementById("pass-input");
+  const passError = document.getElementById("pass-error");
+  const secqOverlay = document.getElementById("secq-overlay");
+  const secqInput = document.getElementById("secq-input");
+  const secqError = document.getElementById("secq-error");
+  const SECURITY_ANSWER = "53";
+  const confirmOverlay = document.getElementById("confirm-overlay");
+  const confirmMessage = document.getElementById("confirm-message");
+  const toastEl = document.getElementById("toast");
+  const modalOverlay = document.getElementById("modal-overlay");
+  const changePassBtn = document.getElementById("change-pass-btn");
+  const changepassOverlay = document.getElementById("changepass-overlay");
+  const newpassInput = document.getElementById("newpass-input");
+  const newpassConfirm = document.getElementById("newpass-confirm");
+  const changepassError = document.getElementById("changepass-error");
+  const modalDeleteBtn = document.getElementById("modal-delete");
+  const modalTitle = document.getElementById("modal-title");
+  const fImage = document.getElementById("f-image");
+  const fName = document.getElementById("f-name");
+  const fMeta = document.getElementById("f-meta");
+  const fPrice = document.getElementById("f-price");
+  const fCat = document.getElementById("f-cat");
+  const fRegionWrap = document.getElementById("f-region-wrap");
+  const fRegion = document.getElementById("f-region");
+  const imgPreview = document.getElementById("img-preview");
+
+  let toastTimer = null;
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> toastEl.classList.remove("show"), 2600);
+  }
+
+  function confirmDialog(message){
+    return new Promise((resolve)=>{
+      confirmMessage.textContent = message;
+      confirmOverlay.classList.add("open");
+      const okBtn = document.getElementById("confirm-ok");
+      const cancelBtn = document.getElementById("confirm-cancel");
+      function cleanup(result){
+        confirmOverlay.classList.remove("open");
+        okBtn.removeEventListener("click", onOk);
+        cancelBtn.removeEventListener("click", onCancel);
+        resolve(result);
+      }
+      function onOk(){ cleanup(true); }
+      function onCancel(){ cleanup(false); }
+      okBtn.addEventListener("click", onOk);
+      cancelBtn.addEventListener("click", onCancel);
+    });
+  }
+
+  async function loadPasscode(){
+    try{
+      const res = await window.storage.get(PASSCODE_KEY, true);
+      if(res && res.value){
+        EDIT_PASSCODE = res.value;
+      } else {
+        await window.storage.set(PASSCODE_KEY, EDIT_PASSCODE, true);
+      }
+    } catch(e){
+      console.error("No se pudo cargar la contraseña guardada, se usa la de por defecto.", e);
+    }
+  }
+
+  async function loadProducts(){
+    try{
+      const res = await window.storage.get(STORAGE_KEY, true);
+      if(res && res.value){
+        PRODUCTS = JSON.parse(res.value);
+      } else {
+        PRODUCTS = DEFAULT_PRODUCTS;
+        await saveProducts();
+      }
+    } catch(e){
+      PRODUCTS = DEFAULT_PRODUCTS;
+      try { await saveProducts(); } catch(e2){ console.error("No se pudo inicializar el catálogo guardado", e2); }
+    }
+  }
+
+  async function saveProducts(){
+    try{
+      const result = await window.storage.set(STORAGE_KEY, JSON.stringify(PRODUCTS), true);
+      if(!result){ console.error("No se pudo guardar el catálogo"); }
+    } catch(e){
+      console.error("Error guardando catálogo", e);
+      toast("No se pudo guardar el cambio. Intenta de nuevo.");
+    }
+  }
+
+  function resizeImage(file){
+    return new Promise((resolve, reject)=>{
+      const reader = new FileReader();
+      reader.onload = (e)=>{
+        const img = new Image();
+        img.onload = ()=>{
+          const maxDim = 700;
+          let { width, height } = img;
+          if(width > maxDim || height > maxDim){
+            if(width > height){ height = Math.round(height * maxDim / width); width = maxDim; }
+            else { width = Math.round(width * maxDim / height); height = maxDim; }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width; canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", 0.82));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderTabs(){
+    tabsEl.innerHTML = CATEGORIES.map(c => `
+      <button class="tab ${c.id===activeCat ? 'active':''}" data-cat="${c.id}">${c.label}</button>
+    `).join("");
+    tabsEl.querySelectorAll(".tab").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        activeCat = btn.dataset.cat;
+        const cfg = CATEGORIES.find(c=>c.id===activeCat);
+        activeRegion = cfg.hasRegions ? "europa" : null;
+        renderTabs();
+        renderSubtabs();
+        renderGrid();
+      });
+    });
+  }
+
+  function renderSubtabs(){
+    const cfg = CATEGORIES.find(c=>c.id===activeCat);
+    if(!cfg.hasRegions){
+      subtabsEl.classList.add("hidden");
+      subtabsEl.innerHTML = "";
+      return;
+    }
+    subtabsEl.classList.remove("hidden");
+    subtabsEl.innerHTML = `<span class="lbl">Región</span>` + REGIONS.map(r=>`
+      <button class="subtab ${r.id===activeRegion ? 'active':''}" data-region="${r.id}">${r.label}</button>
+    `).join("");
+    subtabsEl.querySelectorAll(".subtab").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        activeRegion = btn.dataset.region;
+        renderSubtabs();
+        renderGrid();
+      });
+    });
+  }
+
+  function waLink(product){
+    const msg = `Hola Novah, me interesa la camiseta "${product.name}" (${product.meta}). ¿Está disponible?`;
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  }
+
+  function renderGrid(){
+    const cfg = CATEGORIES.find(c=>c.id===activeCat);
+    headingEl.textContent = cfg.label;
+
+    let items = PRODUCTS.filter(p => p.cat === activeCat);
+    if(cfg.hasRegions){
+      items = items.filter(p => p.region === activeRegion);
+    }
+    countEl.textContent = `${items.length} camiseta${items.length===1?'':'s'}`;
+
+    let html = items.map(p => `
+      <div class="card" data-id="${p.id}">
+        ${editMode ? `
+          <div class="card-edit-actions">
+            <button class="icon-btn" data-action="edit" data-id="${p.id}" title="Editar">
+              <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+              Editar
+            </button>
+            <button class="icon-btn danger" data-action="delete" data-id="${p.id}" title="Eliminar">
+              <svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7L6 7zm3-3h6l1 2H8l1-2z"/></svg>
+              Eliminar
+            </button>
+          </div>
+        ` : ""}
+        <div class="jersey">
+          <span class="tag">${p.meta.split('·')[0].trim()}</span>
+          ${p.image ? `<img src="${p.image}" alt="${p.name}">` : jersey(p.colors[0], p.colors[1], !!p.stripes, p.num)}
+        </div>
+        <div class="card-body">
+          <h3>${p.name}</h3>
+          <div class="meta">${p.meta}</div>
+          <div class="price-row">
+            <div class="price">$${p.price} MXN</div>
+            <a class="wa-btn" href="${waLink(p)}" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.001 2C6.478 2 2 6.477 2 12c0 1.987.579 3.84 1.579 5.398L2 22l4.735-1.545A9.947 9.947 0 0012 22c5.523 0 10-4.477 10-10S17.524 2 12.001 2zm0 18.2a8.16 8.16 0 01-4.437-1.294l-.318-.202-3.148 1.026 1.043-3.07-.207-.316A8.19 8.19 0 013.8 12c0-4.522 3.678-8.2 8.2-8.2s8.2 3.678 8.2 8.2-3.677 8.2-8.199 8.2z"/></svg>
+              Pedir
+            </a>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    if(editMode){
+      html += `
+        <div class="card add-card" id="add-card-btn">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+          Agregar camiseta
+        </div>
+      `;
+    }
+
+    gridEl.innerHTML = html;
+    emptyEl.style.display = (items.length === 0 && !editMode) ? "block" : "none";
+
+    gridEl.querySelectorAll('[data-action="edit"]').forEach(btn=>{
+      btn.addEventListener("click", ()=> openModal(btn.dataset.id));
+    });
+    gridEl.querySelectorAll('[data-action="delete"]').forEach(btn=>{
+      btn.addEventListener("click", ()=> deleteProduct(btn.dataset.id));
+    });
+    const addBtn = document.getElementById("add-card-btn");
+    if(addBtn) addBtn.addEventListener("click", ()=> openModal(null));
+  }
+
+  async function deleteProduct(id){
+    const ok = await confirmDialog("¿Eliminar esta camiseta del catálogo?");
+    if(!ok) return;
+    PRODUCTS = PRODUCTS.filter(p => p.id !== id);
+    await saveProducts();
+    toast("Camiseta eliminada");
+    renderGrid();
+  }
+
+  function openModal(id){
+    editingId = id;
+    pendingImage = null;
+    fImage.value = "";
+    const cfg = CATEGORIES.find(c=>c.id===activeCat);
+
+    if(id){
+      const p = PRODUCTS.find(x=>x.id===id);
+      modalTitle.textContent = "Editar camiseta";
+      fName.value = p.name;
+      fMeta.value = p.meta;
+      fPrice.value = p.price;
+      fCat.value = p.cat;
+      fRegion.value = p.region || "europa";
+      pendingImage = p.image || null;
+      imgPreview.innerHTML = p.image ? `<img src="${p.image}">` : "Sin foto";
+      modalDeleteBtn.style.display = "block";
+    } else {
+      modalTitle.textContent = "Agregar camiseta";
+      fName.value = "";
+      fMeta.value = "";
+      fPrice.value = "";
+      fCat.value = activeCat;
+      fRegion.value = activeRegion || "europa";
+      imgPreview.innerHTML = "Sin foto";
+      modalDeleteBtn.style.display = "none";
+    }
+    toggleRegionField();
+    modalOverlay.classList.add("open");
+  }
+
+  function toggleRegionField(){
+    const cfg = CATEGORIES.find(c=>c.id===fCat.value);
+    fRegionWrap.style.display = cfg.hasRegions ? "block" : "none";
+  }
+
+  fCat.addEventListener("change", toggleRegionField);
+
+  fImage.addEventListener("change", async ()=>{
+    const file = fImage.files[0];
+    if(!file) return;
+    try{
+      pendingImage = await resizeImage(file);
+      imgPreview.innerHTML = `<img src="${pendingImage}">`;
+    } catch(e){
+      toast("No se pudo procesar la imagen, intenta con otra foto.");
+    }
+  });
+
+  document.getElementById("modal-cancel").addEventListener("click", ()=>{
+    modalOverlay.classList.remove("open");
+  });
+
+  modalDeleteBtn.addEventListener("click", async ()=>{
+    const ok = await confirmDialog("¿Eliminar esta camiseta del catálogo?");
+    if(!ok) return;
+    PRODUCTS = PRODUCTS.filter(p => p.id !== editingId);
+    await saveProducts();
+    document.getElementById("stat-total").textContent = PRODUCTS.length;
+    modalOverlay.classList.remove("open");
+    toast("Camiseta eliminada");
+    renderGrid();
+  });
+
+  document.getElementById("modal-save").addEventListener("click", async ()=>{
+    const name = fName.value.trim();
+    const meta = fMeta.value.trim();
+    const price = parseInt(fPrice.value, 10);
+    const cat = fCat.value;
+    const cfg = CATEGORIES.find(c=>c.id===cat);
+    const region = cfg.hasRegions ? fRegion.value : null;
+
+    if(!name || !meta || !price){
+      toast("Completa nombre, detalle y precio.");
+      return;
+    }
+
+    if(editingId){
+      const p = PRODUCTS.find(x=>x.id===editingId);
+      p.name = name; p.meta = meta; p.price = price; p.cat = cat; p.region = region;
+      if(pendingImage) p.image = pendingImage;
+    } else {
+      PRODUCTS.push({
+        id: "p" + Date.now(),
+        cat, region, name, meta, price,
+        image: pendingImage || null,
+        colors: ["#1f5c40", "#f5f1e8"],
+        num: "1"
+      });
+    }
+
+    await saveProducts();
+    document.getElementById("stat-total").textContent = PRODUCTS.length;
+    modalOverlay.classList.remove("open");
+    activeCat = cat;
+    if(region) activeRegion = region;
+    renderTabs();
+    renderSubtabs();
+    renderGrid();
+  });
+
+  function setEditMode(on){
+    editMode = on;
+    editToggle.textContent = editMode ? "Salir de edición" : "Editar catálogo";
+    editToggle.classList.toggle("on", editMode);
+    changePassBtn.style.display = editMode ? "inline-flex" : "none";
+    renderGrid();
+  }
+
+  changePassBtn.addEventListener("click", ()=>{
+    newpassInput.value = "";
+    newpassConfirm.value = "";
+    changepassError.textContent = "";
+    changepassOverlay.classList.add("open");
+    newpassInput.focus();
+  });
+
+  document.getElementById("changepass-cancel").addEventListener("click", ()=>{
+    changepassOverlay.classList.remove("open");
+  });
+
+  document.getElementById("changepass-submit").addEventListener("click", async ()=>{
+    const p1 = newpassInput.value.trim();
+    const p2 = newpassConfirm.value.trim();
+    if(!p1 || p1.length < 4){
+      changepassError.textContent = "La contraseña debe tener al menos 4 caracteres.";
+      return;
+    }
+    if(p1 !== p2){
+      changepassError.textContent = "Las contraseñas no coinciden.";
+      return;
+    }
+    EDIT_PASSCODE = p1;
+    try{
+      await window.storage.set(PASSCODE_KEY, EDIT_PASSCODE, true);
+      changepassOverlay.classList.remove("open");
+      toast("Contraseña actualizada");
+    } catch(e){
+      changepassError.textContent = "No se pudo guardar la nueva contraseña, intenta de nuevo.";
+    }
+  });
+
+  editToggle.addEventListener("click", ()=>{
+    if(editMode){
+      setEditMode(false);
+      return;
+    }
+    passInput.value = "";
+    passError.textContent = "";
+    passOverlay.classList.add("open");
+    passInput.focus();
+  });
+
+  // Gesto secreto: tocar el logo 5 veces en menos de 2 segundos abre el acceso a edición.
+  const brandTrigger = document.getElementById("brand-trigger");
+  let brandTapCount = 0;
+  let brandTapTimer = null;
+  brandTrigger.addEventListener("click", ()=>{
+    if(editMode) return;
+    brandTapCount++;
+    clearTimeout(brandTapTimer);
+    brandTapTimer = setTimeout(()=>{ brandTapCount = 0; }, 2000);
+    if(brandTapCount >= 5){
+      brandTapCount = 0;
+      clearTimeout(brandTapTimer);
+      passInput.value = "";
+      passError.textContent = "";
+      passOverlay.classList.add("open");
+      passInput.focus();
+    }
+  });
+
+  document.getElementById("pass-cancel").addEventListener("click", ()=>{
+    passOverlay.classList.remove("open");
+  });
+
+  function submitPasscode(){
+    if(passInput.value === EDIT_PASSCODE){
+      passOverlay.classList.remove("open");
+      secqInput.value = "";
+      secqError.textContent = "";
+      secqOverlay.classList.add("open");
+      setTimeout(()=> secqInput.focus(), 50);
+    } else {
+      passError.textContent = "Contraseña incorrecta.";
+    }
+  }
+
+  document.getElementById("pass-submit").addEventListener("click", submitPasscode);
+  passInput.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter") submitPasscode();
+  });
+
+  function submitSecurityAnswer(){
+    const val = secqInput.value.trim().toLowerCase();
+    if(val === SECURITY_ANSWER.toLowerCase()){
+      secqOverlay.classList.remove("open");
+      setEditMode(true);
+    } else {
+      secqError.textContent = "Respuesta incorrecta.";
+    }
+  }
+
+  document.getElementById("secq-submit").addEventListener("click", submitSecurityAnswer);
+  secqInput.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter") submitSecurityAnswer();
+  });
+  document.getElementById("secq-cancel").addEventListener("click", ()=>{
+    secqOverlay.classList.remove("open");
+  });
+
+  (async function init(){
+    await loadPasscode();
+    await loadProducts();
+    document.getElementById("stat-total").textContent = PRODUCTS.length;
+    renderTabs();
+    renderSubtabs();
+    renderGrid();
+    startQuoteRotation();
+  })();
+</script>
+
+</body>
+</html><!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Novah — Camisetas de fútbol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12241c;
+    --paper:#f5f2ea;
+    --paper-2:#ece7d9;
+    --gold:#c8992e;
+    --pitch:#1f5c40;
+    --pitch-deep:#123527;
+    --line: rgba(18,36,28,0.14);
+    --muted:#5c6d63;
+    --white:#fffdf8;
+    --danger:#b0392c;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3, .num{
+    font-family:'Anton', sans-serif;
+    font-weight:400;
+    letter-spacing:0.01em;
+  }
+  button{ font-family:inherit; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    background:
+      radial-gradient(ellipse at 50% 35%, #3f8f53 0%, #2c6f42 42%, #1d5233 78%, #12381f 100%);
+    color:var(--white);
+    overflow:hidden;
+    padding:64px 24px 56px;
+  }
+  .hero-inner{
+    max-width:1120px;
+    margin:0 auto;
+    position:relative;
+    z-index:2;
+  }
+  .pitch-bg{
+    position:absolute;
+    inset:0;
+    z-index:1;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+  }
+  .pitch-bg .chalk{
+    stroke:rgba(255,253,248,0.4);
+    stroke-width:2.5;
+    stroke-linecap:round;
+    fill:none;
+  }
+  .pitch-bg .chalk-x{
+    stroke:rgba(255,253,248,0.42);
+    stroke-width:2.5;
+    stroke-linecap:round;
+  }
+  .pitch-bg .chalk-o{
+    stroke:rgba(255,253,248,0.4);
+    stroke-width:2.5;
+    fill:none;
+  }
+  .pitch-bg .chalk-dash{
+    stroke:rgba(255,253,248,0.32);
+    stroke-width:2.5;
+    stroke-linecap:round;
+    fill:none;
+    stroke-dasharray:7 8;
+  }
+  .pitch-bg .corner{
+    stroke:rgba(255,253,248,0.3);
+    stroke-width:2;
+    fill:none;
+  }
+  .brand-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:28px;
+    flex-wrap:wrap;
+  }
+  .brand{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+  }
+  .brand-mark{
+    width:14px;height:14px;
+    background:var(--gold);
+    transform:rotate(45deg);
+    flex:none;
+  }
+  .brand-name{
+    font-size:22px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    font-weight:600;
+    font-family:'Work Sans', sans-serif;
+  }
+  .ig-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(255,253,248,0.1);
+    border:1px solid rgba(255,253,248,0.25);
+    color:var(--white);
+    text-decoration:none;
+    font-size:13px;
+    font-weight:600;
+    padding:9px 16px;
+    border-radius:100px;
+    transition:background .15s ease;
+  }
+  .ig-btn:hover{ background:rgba(255,253,248,0.2); }
+  .ig-btn svg{ width:15px; height:15px; fill:currentColor; }
+  .hero h1{
+    font-size:clamp(40px, 7vw, 76px);
+    line-height:0.98;
+    margin:0 0 18px;
+    max-width:760px;
+  }
+  .hero p{
+    font-size:17px;
+    color:rgba(255,253,248,0.72);
+    max-width:460px;
+    line-height:1.55;
+    margin:0 0 30px;
+  }
+  .hero-stats{
+    display:flex;
+    gap:36px;
+    flex-wrap:wrap;
+  }
+  .hero-stats div strong{
+    display:block;
+    font-family:'Anton', sans-serif;
+    font-size:28px;
+    color:var(--gold);
+  }
+  .hero-stats div span{
+    font-size:13px;
+    color:rgba(255,253,248,0.6);
+  }
+
+  /* ---------- NAV / FILTERS ---------- */
+  .controls{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+    padding:18px 24px;
+  }
+  .controls-inner{
+    max-width:1120px;
+    margin:0 auto;
+  }
+  .tabs-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:12px;
+  }
+  .tabs{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .tab{
+    appearance:none;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--ink);
+    font-weight:600;
+    font-size:14px;
+    padding:9px 18px;
+    border-radius:100px;
+    cursor:pointer;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .tab:hover{ border-color:var(--pitch); }
+  .tab.active{
+    background:var(--pitch-deep);
+    border-color:var(--pitch-deep);
+    color:var(--white);
+  }
+  .edit-toggle{
+    appearance:none;
+    border:1px solid var(--pitch);
+    background:var(--white);
+    color:var(--pitch);
+    font-weight:700;
+    font-size:13px;
+    padding:9px 16px;
+    border-radius:100px;
+    cursor:pointer;
+    white-space:nowrap;
+    display:none;
+  }
+  .edit-toggle.on{
+    background:var(--pitch);
+    color:var(--white);
+    display:inline-flex;
+  }
+  /* Disparador secreto: el logo se toca varias veces para abrir el modo edición */
+  .brand{ cursor:default; -webkit-tap-highlight-color:transparent; user-select:none; }
+  .subtabs{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .subtabs span.lbl{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+    color:var(--muted);
+    margin-right:6px;
+  }
+  .subtab{
+    appearance:none;
+    border:none;
+    background:var(--paper-2);
+    color:var(--ink);
+    font-weight:500;
+    font-size:13px;
+    padding:7px 14px;
+    border-radius:6px;
+    cursor:pointer;
+  }
+  .subtab.active{
+    background:var(--gold);
+    color:var(--pitch-deep);
+    font-weight:700;
+  }
+  .subtabs.hidden{ display:none; }
+
+  /* ---------- GRID ---------- */
+  main{
+    max-width:1120px;
+    margin:0 auto;
+    padding:40px 24px 90px;
+  }
+  .section-title{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    margin-bottom:22px;
+  }
+  .section-title h2{
+    font-size:26px;
+    margin:0;
+  }
+  .section-title .count{
+    font-size:13px;
+    color:var(--muted);
+  }
+  .quote-box{
+    position:relative;
+    background:var(--pitch-deep);
+    color:var(--white);
+    border-radius:8px;
+    padding:22px 24px 20px 52px;
+    margin-bottom:26px;
+    min-height:34px;
+  }
+  .quote-mark{
+    position:absolute;
+    top:18px;
+    left:18px;
+    width:20px;
+    height:20px;
+    fill:var(--gold);
+    opacity:0.9;
+  }
+  .quote-text{
+    margin:0 0 6px;
+    font-size:16px;
+    line-height:1.45;
+    font-style:italic;
+    color:var(--white);
+    opacity:0;
+    transform:translateY(4px);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .quote-text.show{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .quote-author{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:0.04em;
+    color:var(--gold);
+    text-transform:uppercase;
+    opacity:0;
+    transition:opacity .5s ease;
+  }
+  .quote-author.show{ opacity:1; }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
+    gap:20px;
+  }
+  .card{
+    position:relative;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:4px;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+  }
+  .jersey{
+    position:relative;
+    aspect-ratio:1/1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--paper-2);
+    overflow:hidden;
+  }
+  .jersey svg{ width:64%; height:64%; }
+  .jersey img{ width:100%; height:100%; object-fit:cover; }
+  .tag{
+    position:absolute;
+    top:10px;
+    left:10px;
+    background:var(--pitch-deep);
+    color:var(--white);
+    font-size:10px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    padding:4px 8px;
+    border-radius:100px;
+  }
+  .card-edit-actions{
+    position:absolute;
+    top:8px;
+    left:8px;
+    right:8px;
+    display:flex;
+    justify-content:space-between;
+    z-index:5;
+  }
+  .icon-btn{
+    height:30px;
+    padding:0 12px;
+    border-radius:100px;
+    border:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    cursor:pointer;
+    background:rgba(255,253,248,0.95);
+    color:var(--ink);
+    font-size:12px;
+    font-weight:700;
+    box-shadow:0 1px 4px rgba(0,0,0,0.18);
+  }
+  .icon-btn.danger{ background:var(--danger); color:var(--white); }
+  .icon-btn svg{ width:13px; height:13px; fill:currentColor; }
+  .card-body{
+    padding:14px 16px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    flex:1;
+  }
+  .card-body h3{
+    font-weight:700;
+    font-size:15px;
+    margin:0;
+    line-height:1.3;
+  }
+  .card-body .meta{
+    font-size:12px;
+    color:var(--muted);
+  }
+  .price-row{
+    margin-top:auto;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .price{
+    font-family:'Anton', sans-serif;
+    font-size:19px;
+  }
+  .wa-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:var(--pitch);
+    color:var(--white);
+    text-decoration:none;
+    font-size:12px;
+    font-weight:600;
+    padding:9px 12px;
+    border-radius:100px;
+    white-space:nowrap;
+    transition:background .15s ease;
+  }
+  .wa-btn:hover{ background:var(--pitch-deep); }
+  .wa-btn svg{ width:13px; height:13px; fill:currentColor; }
+
+  .add-card{
+    border:2px dashed var(--line);
+    background:transparent;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:220px;
+    cursor:pointer;
+    color:var(--muted);
+    font-weight:600;
+    flex-direction:column;
+    gap:8px;
+    border-radius:4px;
+  }
+  .add-card:hover{ border-color:var(--pitch); color:var(--pitch); }
+  .add-card svg{ width:26px; height:26px; fill:currentColor; }
+
+  .empty{
+    text-align:center;
+    padding:60px 20px;
+    color:var(--muted);
+  }
+
+  footer{
+    background:var(--pitch-deep);
+    color:rgba(255,253,248,0.6);
+    text-align:center;
+    padding:26px;
+    font-size:13px;
+  }
+  footer strong{ color:var(--white); }
+
+  /* ---------- MODAL ---------- */
+  .modal-overlay{
+    position:fixed; inset:0;
+    background:rgba(18,36,28,0.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+    padding:20px;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal{
+    background:var(--white);
+    width:100%;
+    max-width:440px;
+    max-height:90vh;
+    overflow-y:auto;
+    border-radius:8px;
+    padding:26px;
+  }
+  .modal h3{
+    font-family:'Work Sans', sans-serif;
+    font-weight:700;
+    font-size:18px;
+    margin:0 0 18px;
+  }
+  .field{
+    margin-bottom:14px;
+  }
+  .field label{
+    display:block;
+    font-size:12px;
+    font-weight:600;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--muted);
+    margin-bottom:6px;
+  }
+  .field input[type=text], .field input[type=number], .field select{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:14px;
+    background:var(--paper);
+    color:var(--ink);
+  }
+  .field input[type=file]{ font-size:13px; }
+  .img-preview{
+    width:100%;
+    aspect-ratio:1/1;
+    max-width:140px;
+    border-radius:6px;
+    background:var(--paper-2);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    margin-bottom:10px;
+    color:var(--muted);
+    font-size:12px;
+  }
+  .img-preview img{ width:100%; height:100%; object-fit:cover; }
+  .modal-actions{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+  }
+  .btn{
+    flex:1;
+    padding:11px;
+    border-radius:6px;
+    border:none;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+  }
+  .btn-primary{ background:var(--pitch); color:var(--white); }
+  .btn-secondary{ background:var(--paper-2); color:var(--ink); }
+  .save-note{
+    font-size:12px;
+    color:var(--muted);
+    margin-top:12px;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:24px;
+    left:50%;
+    transform:translateX(-50%) translateY(20px);
+    background:var(--ink);
+    color:var(--white);
+    padding:12px 20px;
+    border-radius:100px;
+    font-size:13px;
+    font-weight:600;
+    z-index:200;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+  }
+  .small-modal{
+    background:var(--white);
+    width:100%;
+    max-width:340px;
+    border-radius:8px;
+    padding:24px;
+  }
+  .small-modal p{
+    font-size:14px;
+    color:var(--ink);
+    margin:0 0 16px;
+    line-height:1.5;
+  }
+  .small-modal input[type=password]{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:14px;
+    background:var(--paper);
+    color:var(--ink);
+    margin-bottom:6px;
+  }
+  .field-error{
+    font-size:12px;
+    color:var(--danger);
+    min-height:16px;
+    margin-bottom:10px;
+  }
+
+  @media (max-width:560px){
+    .hero{ padding:48px 18px 42px; }
+    .controls{ padding:14px 18px; }
+    main{ padding:30px 18px 70px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <svg class="pitch-bg" viewBox="0 0 1200 600" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <filter id="chalkGrain" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="2" stitchTiles="stitch" result="noise"/>
+        <feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.05 0"/>
+      </filter>
+      <filter id="chalkRough" x="-30%" y="-30%" width="160%" height="160%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n"/>
+        <feDisplacementMap in="SourceGraphic" in2="n" scale="3"/>
+      </filter>
+    </defs>
+    <rect width="1200" height="600" filter="url(#chalkGrain)"/>
+
+    <!-- media cancha con círculo central -->
+    <line class="chalk" x1="600" y1="20" x2="600" y2="580" filter="url(#chalkRough)"/>
+    <circle class="chalk-o" cx="600" cy="300" r="80" filter="url(#chalkRough)"/>
+    <circle class="chalk" cx="600" cy="300" r="3" filter="url(#chalkRough)"/>
+
+    <!-- esquinas tipo pizarra táctica -->
+    <path class="corner" d="M40,30 A18,18 0 0 1 58,48" filter="url(#chalkRough)"/>
+    <path class="corner" d="M1160,30 A18,18 0 0 0 1142,48" filter="url(#chalkRough)"/>
+    <path class="corner" d="M40,570 A18,18 0 0 0 58,552" filter="url(#chalkRough)"/>
+    <path class="corner" d="M1160,570 A18,18 0 0 1 1142,552" filter="url(#chalkRough)"/>
+
+    <!-- jugadas: flechas curvas punteadas -->
+    <path class="chalk-dash" d="M760,150 Q860,110 950,160" filter="url(#chalkRough)"/>
+    <path class="chalk-dash" d="M840,220 Q880,300 850,380" filter="url(#chalkRough)"/>
+    <path class="chalk-dash" d="M700,420 Q800,460 900,400" filter="url(#chalkRough)"/>
+    <path class="chalk" d="M950,330 L1010,270" filter="url(#chalkRough)"/>
+    <path class="chalk" d="M1005,265 l14,-3 l-3,14" filter="url(#chalkRough)"/>
+    <path class="chalk" d="M955,165 l14,4 l-9,12" filter="url(#chalkRough)"/>
+
+    <!-- X y O de jugadores dispersos -->
+    <g class="chalk-x" filter="url(#chalkRough)">
+      <path d="M700,120 l16,16 M716,120 l-16,16"/>
+      <path d="M1020,110 l16,16 M1036,110 l-16,16"/>
+      <path d="M1080,240 l16,16 M1096,240 l-16,16"/>
+      <path d="M950,400 l16,16 M966,400 l-16,16"/>
+      <path d="M1090,480 l16,16 M1106,480 l-16,16"/>
+      <path d="M760,470 l16,16 M776,470 l-16,16"/>
+    </g>
+    <g filter="url(#chalkRough)">
+      <circle class="chalk-o" cx="880" cy="90" r="11"/>
+      <circle class="chalk-o" cx="1120" cy="170" r="11"/>
+      <circle class="chalk-o" cx="1000" cy="470" r="11"/>
+      <circle class="chalk-o" cx="820" cy="330" r="11"/>
+    </g>
+  </svg>
+  <div class="hero-inner">
+    <div class="brand-row">
+      <div class="brand" id="brand-trigger">
+        <div class="brand-mark"></div>
+        <div class="brand-name">Novah</div>
+      </div>
+      <a class="ig-btn" href="https://instagram.com/novah.cl" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.148 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-10.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+        @novah.cl
+      </a>
+    </div>
+    <h1>Camisetas de fútbol,<br>de cualquier época.</h1>
+    <p>Retro, actuales, temporadas pasadas y selecciones. Elige tu camiseta y arma tu pedido directo por WhatsApp.</p>
+    <div class="hero-stats">
+      <div><strong id="stat-total">0</strong><span>Camisetas</span></div>
+      <div><strong>4</strong><span>Colecciones</span></div>
+      <div><strong>3</strong><span>Regiones</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="controls-inner">
+    <div class="tabs-row">
+      <div class="tabs" id="tabs"></div>
+      <div style="display:flex; gap:8px;">
+        <button class="edit-toggle hidden" id="change-pass-btn" style="display:none;">Cambiar contraseña</button>
+        <button class="edit-toggle" id="edit-toggle">Salir de edición</button>
+      </div>
+    </div>
+    <div class="subtabs" id="subtabs"></div>
+  </div>
+</div>
+
+<main>
+  <div class="section-title">
+    <h2 id="section-heading">Retro</h2>
+    <span class="count" id="section-count"></span>
+  </div>
+  <div class="quote-box" id="quote-box">
+    <svg class="quote-mark" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.17 6C4.87 8.13 3.5 10.87 3.5 14c0 3.03 2.05 5 4.5 5 2.21 0 4-1.79 4-4 0-2.03-1.5-3.71-3.44-3.96C8.9 9.6 10.13 8 12.5 6.5L10 4.5C9 5 8 5.5 7.17 6zm10 0C14.87 8.13 13.5 10.87 13.5 14c0 3.03 2.05 5 4.5 5 2.21 0 4-1.79 4-4 0-2.03-1.5-3.71-3.44-3.96C18.9 9.6 20.13 8 22.5 6.5L20 4.5c-1 .5-2 1-2.83 1.5z"/></svg>
+    <p class="quote-text" id="quote-text"></p>
+    <span class="quote-author" id="quote-author"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none;">No hay camisetas en esta categoría todavía.</div>
+</main>
+
+<footer>
+  Pedidos por WhatsApp · <strong>Novah</strong> © 2026
+</footer>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">Agregar camiseta</h3>
+    <div class="img-preview" id="img-preview">Sin foto</div>
+    <div class="field">
+      <label>Foto</label>
+      <input type="file" id="f-image" accept="image/*">
+    </div>
+    <div class="field">
+      <label>Nombre</label>
+      <input type="text" id="f-name" placeholder="Ej. Real Madrid 25/26 Local">
+    </div>
+    <div class="field">
+      <label>Detalle (temporada, tallas, etc.)</label>
+      <input type="text" id="f-meta" placeholder="Ej. Temporada actual · Talla S-XL">
+    </div>
+    <div class="field">
+      <label>Precio (MXN)</label>
+      <input type="number" id="f-price" placeholder="999">
+    </div>
+    <div class="field">
+      <label>Colección</label>
+      <select id="f-cat">
+        <option value="retro">Retro</option>
+        <option value="actuales">Actuales</option>
+        <option value="temporadas">Temporadas pasadas</option>
+        <option value="selecciones">Selecciones</option>
+      </select>
+    </div>
+    <div class="field" id="f-region-wrap">
+      <label>Región</label>
+      <select id="f-region">
+        <option value="europa">Europa</option>
+        <option value="america">América</option>
+        <option value="otros">Otros</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="modal-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="modal-save">Guardar</button>
+    </div>
+    <button class="btn" id="modal-delete" style="display:none; width:100%; margin-top:10px; background:transparent; color:var(--danger); border:1px solid var(--danger);">Eliminar esta camiseta</button>
+    <div class="save-note">Los cambios se guardan automáticamente y los verá cualquiera que abra este catálogo.</div>
+  </div>
+</div>
+
+<!-- PASSCODE MODAL -->
+<div class="modal-overlay" id="pass-overlay">
+  <div class="small-modal">
+    <h3 style="margin:0 0 12px; font-size:17px;">Modo edición</h3>
+    <p>Escribe la contraseña para poder editar el catálogo.</p>
+    <input type="password" id="pass-input" placeholder="Contraseña">
+    <div class="field-error" id="pass-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="pass-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="pass-submit">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- SECURITY QUESTION MODAL (2FA) -->
+<div class="modal-overlay" id="secq-overlay">
+  <div class="small-modal">
+    <h3 style="margin:0 0 12px; font-size:17px;">Verificación adicional</h3>
+    <p>¿Cuál es tu dorsal de la prepa?</p>
+    <input type="text" id="secq-input" placeholder="Respuesta" autocomplete="off">
+    <div class="field-error" id="secq-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="secq-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="secq-submit">Entrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE PASSWORD MODAL -->
+<div class="modal-overlay" id="changepass-overlay">
+  <div class="small-modal">
+    <h3 style="margin:0 0 12px; font-size:17px;">Cambiar contraseña</h3>
+    <p>Define una nueva contraseña para entrar al modo edición.</p>
+    <input type="password" id="newpass-input" placeholder="Nueva contraseña">
+    <input type="password" id="newpass-confirm" placeholder="Confirma la nueva contraseña" style="margin-top:8px;">
+    <div class="field-error" id="changepass-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="changepass-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="changepass-submit">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-overlay">
+  <div class="small-modal">
+    <h3 style="margin:0 0 12px; font-size:17px;">Eliminar camiseta</h3>
+    <p id="confirm-message">¿Eliminar esta camiseta del catálogo?</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="confirm-cancel">Cancelar</button>
+      <button class="btn btn-primary" style="background:var(--danger);" id="confirm-ok">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const WHATSAPP_NUMBER = "5586760070";
+  const STORAGE_KEY = "novah-products";
+  const PASSCODE_KEY = "novah-passcode";
+  let EDIT_PASSCODE = "novah2026";
+
+  const CATEGORIES = [
+    { id: "retro", label: "Retro", hasRegions: true },
+    { id: "actuales", label: "Actuales", hasRegions: true },
+    { id: "temporadas", label: "Temporadas pasadas", hasRegions: true },
+    { id: "selecciones", label: "Selecciones", hasRegions: false },
+  ];
+  const REGIONS = [
+    { id: "europa", label: "Europa" },
+    { id: "america", label: "América" },
+    { id: "otros", label: "Otros" },
+  ];
+
+  function jersey(primary, secondary, stripes, number){
+    const stripeEls = stripes ? `
+      <rect x="20" y="10" width="10" height="80" fill="${secondary}" />
+      <rect x="70" y="10" width="10" height="80" fill="${secondary}" />
+    ` : '';
+    return `
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <path d="M30 8 L10 22 L18 34 L28 28 L28 92 L72 92 L72 28 L82 34 L90 22 L70 8 L58 16 L42 16 Z" fill="${primary}" stroke="${secondary}" stroke-width="2"/>
+      ${stripeEls}
+      <text x="50" y="62" font-family="Anton, sans-serif" font-size="26" fill="${secondary}" text-anchor="middle">${number}</text>
+    </svg>`;
+  }
+
+  const DEFAULT_PRODUCTS = [
+    { id:"p1", cat:"retro", region:"europa", name:"AC Milano '94 Local", meta:"Retro · Talla S–XL", price:899, colors:["#c8102e","#0a0a0a"], num:"9" },
+    { id:"p2", cat:"retro", region:"europa", name:"Manchester Reds '99 Visitante", meta:"Retro · Talla S–XL", price:949, colors:["#f5f1e8","#1a1a1a"], num:"7" },
+    { id:"p3", cat:"retro", region:"europa", name:"Barça Blaugrana '92", meta:"Retro · Talla S–XL", price:929, colors:["#a50044","#004d98"], num:"10", stripes:true },
+    { id:"p4", cat:"retro", region:"america", name:"Xeneizes '81 Titular", meta:"Retro · Talla S–XL", price:869, colors:["#0a2f5c","#f2c230"], num:"5", stripes:true },
+    { id:"p5", cat:"retro", region:"america", name:"Millonarios '86 Local", meta:"Retro · Talla S–XL", price:889, colors:["#f5f1e8","#c8102e"], num:"11", stripes:true },
+    { id:"p6", cat:"retro", region:"america", name:"Tricolor Paulista '92", meta:"Retro · Talla S–XL", price:859, colors:["#f5f1e8","#c8102e"], num:"8" },
+    { id:"p7", cat:"retro", region:"otros", name:"Samurái Azul '98", meta:"Retro · Talla S–XL", price:919, colors:["#0033a0","#f5f1e8"], num:"10" },
+    { id:"p8", cat:"retro", region:"otros", name:"USA '94 Local", meta:"Retro · Talla S–XL", price:899, colors:["#f5f1e8","#a50044"], num:"9", stripes:true },
+    { id:"p9", cat:"actuales", region:"europa", name:"Merengue 25/26 Local", meta:"Temporada actual", price:1099, colors:["#f5f1e8","#c8992e"], num:"11" },
+    { id:"p10", cat:"actuales", region:"europa", name:"Bávaros 25/26 Local", meta:"Temporada actual", price:1079, colors:["#c8102e","#0a0a0a"], num:"9" },
+    { id:"p11", cat:"actuales", region:"europa", name:"Parisinos 25/26 Local", meta:"Temporada actual", price:1099, colors:["#0a2f5c","#c8102e"], num:"7", stripes:true },
+    { id:"p12", cat:"actuales", region:"america", name:"Mengão 25/26 Local", meta:"Temporada actual", price:1029, colors:["#c8102e","#0a0a0a"], num:"10", stripes:true },
+    { id:"p13", cat:"actuales", region:"america", name:"Verdão 25/26 Local", meta:"Temporada actual", price:1029, colors:["#1f5c40","#f5f1e8"], num:"9" },
+    { id:"p14", cat:"actuales", region:"america", name:"Rayados 25/26 Local", meta:"Temporada actual", price:989, colors:["#0a2f5c","#f5f1e8"], num:"22", stripes:true },
+    { id:"p15", cat:"actuales", region:"otros", name:"Al-Riyadh 25/26 Local", meta:"Temporada actual", price:1049, colors:["#f2c230","#0a2f5c"], num:"7" },
+    { id:"p16", cat:"actuales", region:"otros", name:"Diamantes Rojos 25/26", meta:"Temporada actual", price:989, colors:["#c8102e","#f5f1e8"], num:"14", stripes:true },
+    { id:"p17", cat:"temporadas", region:"europa", name:"Blues 2012 Champions", meta:"Temporada 2011–12", price:939, colors:["#034694","#f5f1e8"], num:"8" },
+    { id:"p18", cat:"temporadas", region:"europa", name:"Reds 2005 Estambul", meta:"Temporada 2004–05", price:959, colors:["#c8102e","#f5f1e8"], num:"5" },
+    { id:"p19", cat:"temporadas", region:"europa", name:"Nerazzurri 2010 Treble", meta:"Temporada 2009–10", price:949, colors:["#0a2f5c","#0a0a0a"], num:"9", stripes:true },
+    { id:"p20", cat:"temporadas", region:"america", name:"Timão 2012 Mundial", meta:"Temporada 2012", price:919, colors:["#f5f1e8","#0a0a0a"], num:"10" },
+    { id:"p21", cat:"temporadas", region:"america", name:"Rojo 2017 Sudamericana", meta:"Temporada 2017", price:889, colors:["#c8102e","#f5f1e8"], num:"11" },
+    { id:"p22", cat:"temporadas", region:"america", name:"Cementeros 2018 Local", meta:"Temporada 2018", price:899, colors:["#0033a0","#f5f1e8"], num:"7", stripes:true },
+    { id:"p23", cat:"temporadas", region:"otros", name:"Al Ain 2019 Local", meta:"Temporada 2018–19", price:909, colors:["#f2c230","#0a0a0a"], num:"9" },
+    { id:"p24", cat:"temporadas", region:"otros", name:"Ciervos 2016 Local", meta:"Temporada 2016", price:889, colors:["#c8102e","#0a0a0a"], num:"8", stripes:true },
+    { id:"p25", cat:"selecciones", region:null, name:"Albiceleste Local", meta:"Selección nacional", price:1149, colors:["#75aadb","#f5f1e8"], num:"10", stripes:true },
+    { id:"p26", cat:"selecciones", region:null, name:"Canarinha Local", meta:"Selección nacional", price:1149, colors:["#f2c230","#1f5c40"], num:"9" },
+    { id:"p27", cat:"selecciones", region:null, name:"El Tri Local", meta:"Selección nacional", price:1099, colors:["#1f5c40","#f5f1e8"], num:"11" },
+    { id:"p28", cat:"selecciones", region:null, name:"Les Bleus Local", meta:"Selección nacional", price:1099, colors:["#0a2f5c","#f5f1e8"], num:"7" },
+    { id:"p29", cat:"selecciones", region:null, name:"La Roja Local", meta:"Selección nacional", price:1049, colors:["#c8102e","#f2c230"], num:"8" },
+    { id:"p30", cat:"selecciones", region:null, name:"Die Mannschaft Local", meta:"Selección nacional", price:1099, colors:["#f5f1e8","#0a0a0a"], num:"13" },
+    { id:"p31", cat:"selecciones", region:null, name:"Samurái Azul Local", meta:"Selección nacional", price:1029, colors:["#0033a0","#f5f1e8"], num:"10" },
+    { id:"p32", cat:"selecciones", region:null, name:"La Celeste Local", meta:"Selección nacional", price:1029, colors:["#75aadb","#f5f1e8"], num:"9" },
+  ];
+
+  const QUOTES = [
+    { text: "La pelota no se mancha.", author: "Diego Maradona" },
+    { text: "Jugar al fútbol es muy sencillo, pero jugar un fútbol sencillo es lo más difícil que hay.", author: "Johan Cruyff" },
+    { text: "Ningún jugador es tan bueno como todos juntos.", author: "Alfredo Di Stéfano" },
+    { text: "El fútbol es el deporte más hermoso y sencillo del mundo.", author: "Jorge Valdano" },
+    { text: "Si hubiera nacido feo, nunca habríais oído hablar de Pelé.", author: "George Best" },
+    { text: "Llegué como una leyenda, me voy como una leyenda.", author: "Zlatan Ibrahimović" },
+    { text: "El éxito no es un accidente, es trabajo duro y perseverancia.", author: "Pelé" },
+    { text: "Si se cree y se trabaja, se puede.", author: "Diego Simeone" },
+    { text: "No vine a ser uno más, vine a dejar huella.", author: "Neymar Jr." },
+    { text: "Salid y disfrutad.", author: "Johan Cruyff" },
+  ];
+  let quoteIndex = 0;
+  let quoteTimer = null;
+
+  function renderQuote(){
+    const q = QUOTES[quoteIndex];
+    const textEl = document.getElementById("quote-text");
+    const authorEl = document.getElementById("quote-author");
+    textEl.classList.remove("show");
+    authorEl.classList.remove("show");
+    setTimeout(()=>{
+      textEl.textContent = `“${q.text}”`;
+      authorEl.textContent = q.author;
+      textEl.classList.add("show");
+      authorEl.classList.add("show");
+    }, 220);
+  }
+
+  function startQuoteRotation(){
+    renderQuote();
+    quoteTimer = setInterval(()=>{
+      quoteIndex = (quoteIndex + 1) % QUOTES.length;
+      renderQuote();
+    }, 10000);
+  }
+
+  let PRODUCTS = [];
+  let activeCat = "retro";
+  let activeRegion = "europa";
+  let editMode = false;
+  let editingId = null;
+  let pendingImage = null;
+
+  const tabsEl = document.getElementById("tabs");
+  const subtabsEl = document.getElementById("subtabs");
+  const gridEl = document.getElementById("grid");
+  const headingEl = document.getElementById("section-heading");
+  const countEl = document.getElementById("section-count");
+  const emptyEl = document.getElementById("empty");
+  const editToggle = document.getElementById("edit-toggle");
+  const passOverlay = document.getElementById("pass-overlay");
+  const passInput = document.getElementById("pass-input");
+  const passError = document.getElementById("pass-error");
+  const secqOverlay = document.getElementById("secq-overlay");
+  const secqInput = document.getElementById("secq-input");
+  const secqError = document.getElementById("secq-error");
+  const SECURITY_ANSWER = "53";
+  const confirmOverlay = document.getElementById("confirm-overlay");
+  const confirmMessage = document.getElementById("confirm-message");
+  const toastEl = document.getElementById("toast");
+  const modalOverlay = document.getElementById("modal-overlay");
+  const changePassBtn = document.getElementById("change-pass-btn");
+  const changepassOverlay = document.getElementById("changepass-overlay");
+  const newpassInput = document.getElementById("newpass-input");
+  const newpassConfirm = document.getElementById("newpass-confirm");
+  const changepassError = document.getElementById("changepass-error");
+  const modalDeleteBtn = document.getElementById("modal-delete");
+  const modalTitle = document.getElementById("modal-title");
+  const fImage = document.getElementById("f-image");
+  const fName = document.getElementById("f-name");
+  const fMeta = document.getElementById("f-meta");
+  const fPrice = document.getElementById("f-price");
+  const fCat = document.getElementById("f-cat");
+  const fRegionWrap = document.getElementById("f-region-wrap");
+  const fRegion = document.getElementById("f-region");
+  const imgPreview = document.getElementById("img-preview");
+
+  let toastTimer = null;
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> toastEl.classList.remove("show"), 2600);
+  }
+
+  function confirmDialog(message){
+    return new Promise((resolve)=>{
+      confirmMessage.textContent = message;
+      confirmOverlay.classList.add("open");
+      const okBtn = document.getElementById("confirm-ok");
+      const cancelBtn = document.getElementById("confirm-cancel");
+      function cleanup(result){
+        confirmOverlay.classList.remove("open");
+        okBtn.removeEventListener("click", onOk);
+        cancelBtn.removeEventListener("click", onCancel);
+        resolve(result);
+      }
+      function onOk(){ cleanup(true); }
+      function onCancel(){ cleanup(false); }
+      okBtn.addEventListener("click", onOk);
+      cancelBtn.addEventListener("click", onCancel);
+    });
+  }
+
+  async function loadPasscode(){
+    try{
+      const res = await window.storage.get(PASSCODE_KEY, true);
+      if(res && res.value){
+        EDIT_PASSCODE = res.value;
+      } else {
+        await window.storage.set(PASSCODE_KEY, EDIT_PASSCODE, true);
+      }
+    } catch(e){
+      console.error("No se pudo cargar la contraseña guardada, se usa la de por defecto.", e);
+    }
+  }
+
+  async function loadProducts(){
+    try{
+      const res = await window.storage.get(STORAGE_KEY, true);
+      if(res && res.value){
+        PRODUCTS = JSON.parse(res.value);
+      } else {
+        PRODUCTS = DEFAULT_PRODUCTS;
+        await saveProducts();
+      }
+    } catch(e){
+      PRODUCTS = DEFAULT_PRODUCTS;
+      try { await saveProducts(); } catch(e2){ console.error("No se pudo inicializar el catálogo guardado", e2); }
+    }
+  }
+
+  async function saveProducts(){
+    try{
+      const result = await window.storage.set(STORAGE_KEY, JSON.stringify(PRODUCTS), true);
+      if(!result){ console.error("No se pudo guardar el catálogo"); }
+    } catch(e){
+      console.error("Error guardando catálogo", e);
+      toast("No se pudo guardar el cambio. Intenta de nuevo.");
+    }
+  }
+
+  function resizeImage(file){
+    return new Promise((resolve, reject)=>{
+      const reader = new FileReader();
+      reader.onload = (e)=>{
+        const img = new Image();
+        img.onload = ()=>{
+          const maxDim = 700;
+          let { width, height } = img;
+          if(width > maxDim || height > maxDim){
+            if(width > height){ height = Math.round(height * maxDim / width); width = maxDim; }
+            else { width = Math.round(width * maxDim / height); height = maxDim; }
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width = width; canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", 0.82));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function renderTabs(){
+    tabsEl.innerHTML = CATEGORIES.map(c => `
+      <button class="tab ${c.id===activeCat ? 'active':''}" data-cat="${c.id}">${c.label}</button>
+    `).join("");
+    tabsEl.querySelectorAll(".tab").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        activeCat = btn.dataset.cat;
+        const cfg = CATEGORIES.find(c=>c.id===activeCat);
+        activeRegion = cfg.hasRegions ? "europa" : null;
+        renderTabs();
+        renderSubtabs();
+        renderGrid();
+      });
+    });
+  }
+
+  function renderSubtabs(){
+    const cfg = CATEGORIES.find(c=>c.id===activeCat);
+    if(!cfg.hasRegions){
+      subtabsEl.classList.add("hidden");
+      subtabsEl.innerHTML = "";
+      return;
+    }
+    subtabsEl.classList.remove("hidden");
+    subtabsEl.innerHTML = `<span class="lbl">Región</span>` + REGIONS.map(r=>`
+      <button class="subtab ${r.id===activeRegion ? 'active':''}" data-region="${r.id}">${r.label}</button>
+    `).join("");
+    subtabsEl.querySelectorAll(".subtab").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        activeRegion = btn.dataset.region;
+        renderSubtabs();
+        renderGrid();
+      });
+    });
+  }
+
+  function waLink(product){
+    const msg = `Hola Novah, me interesa la camiseta "${product.name}" (${product.meta}). ¿Está disponible?`;
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+  }
+
+  function renderGrid(){
+    const cfg = CATEGORIES.find(c=>c.id===activeCat);
+    headingEl.textContent = cfg.label;
+
+    let items = PRODUCTS.filter(p => p.cat === activeCat);
+    if(cfg.hasRegions){
+      items = items.filter(p => p.region === activeRegion);
+    }
+    countEl.textContent = `${items.length} camiseta${items.length===1?'':'s'}`;
+
+    let html = items.map(p => `
+      <div class="card" data-id="${p.id}">
+        ${editMode ? `
+          <div class="card-edit-actions">
+            <button class="icon-btn" data-action="edit" data-id="${p.id}" title="Editar">
+              <svg viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+              Editar
+            </button>
+            <button class="icon-btn danger" data-action="delete" data-id="${p.id}" title="Eliminar">
+              <svg viewBox="0 0 24 24"><path d="M6 7h12l-1 13H7L6 7zm3-3h6l1 2H8l1-2z"/></svg>
+              Eliminar
+            </button>
+          </div>
+        ` : ""}
+        <div class="jersey">
+          <span class="tag">${p.meta.split('·')[0].trim()}</span>
+          ${p.image ? `<img src="${p.image}" alt="${p.name}">` : jersey(p.colors[0], p.colors[1], !!p.stripes, p.num)}
+        </div>
+        <div class="card-body">
+          <h3>${p.name}</h3>
+          <div class="meta">${p.meta}</div>
+          <div class="price-row">
+            <div class="price">$${p.price} MXN</div>
+            <a class="wa-btn" href="${waLink(p)}" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12.001 2C6.478 2 2 6.477 2 12c0 1.987.579 3.84 1.579 5.398L2 22l4.735-1.545A9.947 9.947 0 0012 22c5.523 0 10-4.477 10-10S17.524 2 12.001 2zm0 18.2a8.16 8.16 0 01-4.437-1.294l-.318-.202-3.148 1.026 1.043-3.07-.207-.316A8.19 8.19 0 013.8 12c0-4.522 3.678-8.2 8.2-8.2s8.2 3.678 8.2 8.2-3.677 8.2-8.199 8.2z"/></svg>
+              Pedir
+            </a>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    if(editMode){
+      html += `
+        <div class="card add-card" id="add-card-btn">
+          <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+          Agregar camiseta
+        </div>
+      `;
+    }
+
+    gridEl.innerHTML = html;
+    emptyEl.style.display = (items.length === 0 && !editMode) ? "block" : "none";
+
+    gridEl.querySelectorAll('[data-action="edit"]').forEach(btn=>{
+      btn.addEventListener("click", ()=> openModal(btn.dataset.id));
+    });
+    gridEl.querySelectorAll('[data-action="delete"]').forEach(btn=>{
+      btn.addEventListener("click", ()=> deleteProduct(btn.dataset.id));
+    });
+    const addBtn = document.getElementById("add-card-btn");
+    if(addBtn) addBtn.addEventListener("click", ()=> openModal(null));
+  }
+
+  async function deleteProduct(id){
+    const ok = await confirmDialog("¿Eliminar esta camiseta del catálogo?");
+    if(!ok) return;
+    PRODUCTS = PRODUCTS.filter(p => p.id !== id);
+    await saveProducts();
+    toast("Camiseta eliminada");
+    renderGrid();
+  }
+
+  function openModal(id){
+    editingId = id;
+    pendingImage = null;
+    fImage.value = "";
+    const cfg = CATEGORIES.find(c=>c.id===activeCat);
+
+    if(id){
+      const p = PRODUCTS.find(x=>x.id===id);
+      modalTitle.textContent = "Editar camiseta";
+      fName.value = p.name;
+      fMeta.value = p.meta;
+      fPrice.value = p.price;
+      fCat.value = p.cat;
+      fRegion.value = p.region || "europa";
+      pendingImage = p.image || null;
+      imgPreview.innerHTML = p.image ? `<img src="${p.image}">` : "Sin foto";
+      modalDeleteBtn.style.display = "block";
+    } else {
+      modalTitle.textContent = "Agregar camiseta";
+      fName.value = "";
+      fMeta.value = "";
+      fPrice.value = "";
+      fCat.value = activeCat;
+      fRegion.value = activeRegion || "europa";
+      imgPreview.innerHTML = "Sin foto";
+      modalDeleteBtn.style.display = "none";
+    }
+    toggleRegionField();
+    modalOverlay.classList.add("open");
+  }
+
+  function toggleRegionField(){
+    const cfg = CATEGORIES.find(c=>c.id===fCat.value);
+    fRegionWrap.style.display = cfg.hasRegions ? "block" : "none";
+  }
+
+  fCat.addEventListener("change", toggleRegionField);
+
+  fImage.addEventListener("change", async ()=>{
+    const file = fImage.files[0];
+    if(!file) return;
+    try{
+      pendingImage = await resizeImage(file);
+      imgPreview.innerHTML = `<img src="${pendingImage}">`;
+    } catch(e){
+      toast("No se pudo procesar la imagen, intenta con otra foto.");
+    }
+  });
+
+  document.getElementById("modal-cancel").addEventListener("click", ()=>{
+    modalOverlay.classList.remove("open");
+  });
+
+  modalDeleteBtn.addEventListener("click", async ()=>{
+    const ok = await confirmDialog("¿Eliminar esta camiseta del catálogo?");
+    if(!ok) return;
+    PRODUCTS = PRODUCTS.filter(p => p.id !== editingId);
+    await saveProducts();
+    document.getElementById("stat-total").textContent = PRODUCTS.length;
+    modalOverlay.classList.remove("open");
+    toast("Camiseta eliminada");
+    renderGrid();
+  });
+
+  document.getElementById("modal-save").addEventListener("click", async ()=>{
+    const name = fName.value.trim();
+    const meta = fMeta.value.trim();
+    const price = parseInt(fPrice.value, 10);
+    const cat = fCat.value;
+    const cfg = CATEGORIES.find(c=>c.id===cat);
+    const region = cfg.hasRegions ? fRegion.value : null;
+
+    if(!name || !meta || !price){
+      toast("Completa nombre, detalle y precio.");
+      return;
+    }
+
+    if(editingId){
+      const p = PRODUCTS.find(x=>x.id===editingId);
+      p.name = name; p.meta = meta; p.price = price; p.cat = cat; p.region = region;
+      if(pendingImage) p.image = pendingImage;
+    } else {
+      PRODUCTS.push({
+        id: "p" + Date.now(),
+        cat, region, name, meta, price,
+        image: pendingImage || null,
+        colors: ["#1f5c40", "#f5f1e8"],
+        num: "1"
+      });
+    }
+
+    await saveProducts();
+    document.getElementById("stat-total").textContent = PRODUCTS.length;
+    modalOverlay.classList.remove("open");
+    activeCat = cat;
+    if(region) activeRegion = region;
+    renderTabs();
+    renderSubtabs();
+    renderGrid();
+  });
+
+  function setEditMode(on){
+    editMode = on;
+    editToggle.textContent = editMode ? "Salir de edición" : "Editar catálogo";
+    editToggle.classList.toggle("on", editMode);
+    changePassBtn.style.display = editMode ? "inline-flex" : "none";
+    renderGrid();
+  }
+
+  changePassBtn.addEventListener("click", ()=>{
+    newpassInput.value = "";
+    newpassConfirm.value = "";
+    changepassError.textContent = "";
+    changepassOverlay.classList.add("open");
+    newpassInput.focus();
+  });
+
+  document.getElementById("changepass-cancel").addEventListener("click", ()=>{
+    changepassOverlay.classList.remove("open");
+  });
+
+  document.getElementById("changepass-submit").addEventListener("click", async ()=>{
+    const p1 = newpassInput.value.trim();
+    const p2 = newpassConfirm.value.trim();
+    if(!p1 || p1.length < 4){
+      changepassError.textContent = "La contraseña debe tener al menos 4 caracteres.";
+      return;
+    }
+    if(p1 !== p2){
+      changepassError.textContent = "Las contraseñas no coinciden.";
+      return;
+    }
+    EDIT_PASSCODE = p1;
+    try{
+      await window.storage.set(PASSCODE_KEY, EDIT_PASSCODE, true);
+      changepassOverlay.classList.remove("open");
+      toast("Contraseña actualizada");
+    } catch(e){
+      changepassError.textContent = "No se pudo guardar la nueva contraseña, intenta de nuevo.";
+    }
+  });
+
+  editToggle.addEventListener("click", ()=>{
+    if(editMode){
+      setEditMode(false);
+      return;
+    }
+    passInput.value = "";
+    passError.textContent = "";
+    passOverlay.classList.add("open");
+    passInput.focus();
+  });
+
+  // Gesto secreto: tocar el logo 5 veces en menos de 2 segundos abre el acceso a edición.
+  const brandTrigger = document.getElementById("brand-trigger");
+  let brandTapCount = 0;
+  let brandTapTimer = null;
+  brandTrigger.addEventListener("click", ()=>{
+    if(editMode) return;
+    brandTapCount++;
+    clearTimeout(brandTapTimer);
+    brandTapTimer = setTimeout(()=>{ brandTapCount = 0; }, 2000);
+    if(brandTapCount >= 5){
+      brandTapCount = 0;
+      clearTimeout(brandTapTimer);
+      passInput.value = "";
+      passError.textContent = "";
+      passOverlay.classList.add("open");
+      passInput.focus();
+    }
+  });
+
+  document.getElementById("pass-cancel").addEventListener("click", ()=>{
+    passOverlay.classList.remove("open");
+  });
+
+  function submitPasscode(){
+    if(passInput.value === EDIT_PASSCODE){
+      passOverlay.classList.remove("open");
+      secqInput.value = "";
+      secqError.textContent = "";
+      secqOverlay.classList.add("open");
+      setTimeout(()=> secqInput.focus(), 50);
+    } else {
+      passError.textContent = "Contraseña incorrecta.";
+    }
+  }
+
+  document.getElementById("pass-submit").addEventListener("click", submitPasscode);
+  passInput.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter") submitPasscode();
+  });
+
+  function submitSecurityAnswer(){
+    const val = secqInput.value.trim().toLowerCase();
+    if(val === SECURITY_ANSWER.toLowerCase()){
+      secqOverlay.classList.remove("open");
+      setEditMode(true);
+    } else {
+      secqError.textContent = "Respuesta incorrecta.";
+    }
+  }
+
+  document.getElementById("secq-submit").addEventListener("click", submitSecurityAnswer);
+  secqInput.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter") submitSecurityAnswer();
+  });
+  document.getElementById("secq-cancel").addEventListener("click", ()=>{
+    secqOverlay.classList.remove("open");
+  });
+
+  (async function init(){
+    await loadPasscode();
+    await loadProducts();
+    document.getElementById("stat-total").textContent = PRODUCTS.length;
+    renderTabs();
+    renderSubtabs();
+    renderGrid();
+    startQuoteRotation();
+  })();
+</script>
+
+</body>
+</html>
