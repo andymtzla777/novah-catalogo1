@@ -127,6 +127,21 @@
   }
   .ig-btn:hover{ background:rgba(255,253,248,0.2); }
   .ig-btn svg{ width:15px; height:15px; fill:currentColor; }
+  .icon-round-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:38px;
+    height:38px;
+    background:rgba(255,253,248,0.1);
+    border:1px solid rgba(255,253,248,0.25);
+    color:var(--white);
+    border-radius:50%;
+    cursor:pointer;
+    transition:background .15s ease;
+  }
+  .icon-round-btn:hover{ background:rgba(255,253,248,0.2); }
+  .icon-round-btn svg{ width:17px; height:17px; fill:none; stroke:currentColor; stroke-width:1.8; }
   .hero h1{
     font-size:clamp(40px, 7vw, 76px);
     line-height:0.98;
@@ -807,10 +822,15 @@
         <div class="brand-mark"></div>
         <div class="brand-name">Novah</div>
       </div>
-      <a class="ig-btn" href="https://instagram.com/novah.jerseys" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.148 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-10.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-        @novah.jerseys
-      </a>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <a class="ig-btn" href="https://instagram.com/novah.jerseys" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.148 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-10.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+          @novah.jerseys
+        </a>
+        <button class="icon-round-btn" id="qr-trigger" title="Mostrar código QR" aria-label="Mostrar código QR">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><line x1="14" y1="14" x2="14" y2="17"/><line x1="14" y1="20" x2="14" y2="21"/><line x1="17" y1="14" x2="21" y2="14"/><line x1="17" y1="17" x2="19" y2="17"/><line x1="17" y1="20" x2="21" y2="20"/><line x1="21" y1="17" x2="21" y2="21"/></svg>
+        </button>
+      </div>
     </div>
     <h1>Camisetas de fútbol,<br>de cualquier época.</h1>
     <p>Retro, actuales, temporadas pasadas y selecciones. Elige tu camiseta y arma tu pedido directo por WhatsApp.</p>
@@ -978,12 +998,33 @@
   </div>
 </div>
 
+<!-- QR MODAL -->
+<div class="modal-overlay" id="qr-overlay">
+  <div class="small-modal" style="text-align:center;">
+    <h3 style="margin:0 0 12px; font-size:17px;">Comparte el catálogo</h3>
+    <p>Que lo escaneen con la cámara de su celular para abrirlo directo.</p>
+    <div style="background:var(--white); border:1px solid var(--line); border-radius:8px; padding:16px; display:inline-flex; margin-bottom:14px;">
+      <img id="qr-image" src="" alt="Código QR del catálogo" width="220" height="220" style="display:block;">
+    </div>
+    <div class="email-label" style="text-align:left;">Link público de tu catálogo</div>
+    <div class="email-row" style="margin-bottom:6px;">
+      <input type="text" id="qr-url" placeholder="https://tu-catalogo.netlify.app" style="flex:1; padding:9px 12px; border:1px solid var(--line); border-radius:6px; font-size:12px; background:var(--paper); color:var(--ink);">
+      <button id="qr-save">Generar</button>
+    </div>
+    <div class="email-hint" style="text-align:left; margin-bottom:14px;">Pega aquí el link fijo donde publicaste el catálogo (Netlify, GitHub Pages, etc). Se guarda para que el QR siempre funcione, para ti y para tus clientes.</div>
+    <div class="modal-actions" style="margin-top:0;">
+      <button class="btn btn-secondary" id="qr-close" style="flex:none; width:100%;">Cerrar</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
   const WHATSAPP_NUMBER = "5586760070";
   const STORAGE_KEY = "novah-products";
   const PASSCODE_KEY = "novah-passcode";
+  const PUBLIC_URL_KEY = "novah-public-url";
   const WISHLIST_KEY = "novah-wishlist";
   const EMAIL_KEY = "novah-user-email";
   let CURRENT_EMAIL = null;
@@ -1382,6 +1423,50 @@
     });
   }
   closeOverlayOnBackdrop(wishlistOverlay);
+
+  const qrTrigger = document.getElementById("qr-trigger");
+  const qrOverlay = document.getElementById("qr-overlay");
+  const qrImage = document.getElementById("qr-image");
+  const qrUrlInput = document.getElementById("qr-url");
+
+  function renderQrImage(url){
+    if(!url){
+      qrImage.src = "";
+      return;
+    }
+    qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(url)}`;
+  }
+
+  qrTrigger.addEventListener("click", async ()=>{
+    let savedUrl = "";
+    try{
+      const res = await window.storage.get(PUBLIC_URL_KEY, true);
+      if(res && res.value) savedUrl = res.value;
+    } catch(e){}
+    qrUrlInput.value = savedUrl;
+    renderQrImage(savedUrl);
+    qrOverlay.classList.add("open");
+  });
+
+  document.getElementById("qr-save").addEventListener("click", async ()=>{
+    const url = qrUrlInput.value.trim();
+    if(!url || !url.startsWith("http")){
+      toast("Escribe un link válido que empiece con https://");
+      return;
+    }
+    try{
+      await window.storage.set(PUBLIC_URL_KEY, url, true);
+      renderQrImage(url);
+      toast("Link guardado, el QR ya está listo.");
+    } catch(e){
+      toast("No se pudo guardar el link, intenta de nuevo.");
+    }
+  });
+
+  document.getElementById("qr-close").addEventListener("click", ()=>{
+    qrOverlay.classList.remove("open");
+  });
+  closeOverlayOnBackdrop(qrOverlay);
 
   function resizeImage(file){
     return new Promise((resolve, reject)=>{
