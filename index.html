@@ -677,6 +677,71 @@
   }
   .wishlist-empty{ text-align:center; color:var(--muted); padding:30px 10px; font-size:14px; }
 
+  .email-section{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px;
+    margin-bottom:18px;
+  }
+  .email-section .email-label{
+    font-size:12px;
+    font-weight:700;
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+    color:var(--muted);
+    margin-bottom:8px;
+    display:block;
+  }
+  .email-row{
+    display:flex;
+    gap:8px;
+  }
+  .email-row input[type=email]{
+    flex:1;
+    padding:9px 12px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:13px;
+    background:var(--white);
+    color:var(--ink);
+  }
+  .email-row button{
+    appearance:none;
+    border:none;
+    background:var(--pitch);
+    color:var(--white);
+    font-weight:700;
+    font-size:13px;
+    padding:0 16px;
+    border-radius:6px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .email-status{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    font-size:13px;
+  }
+  .email-status strong{ color:var(--pitch-deep); }
+  .email-status button{
+    appearance:none;
+    border:none;
+    background:none;
+    color:var(--muted);
+    font-size:12px;
+    font-weight:700;
+    cursor:pointer;
+    text-decoration:underline;
+  }
+  .email-hint{
+    font-size:11px;
+    color:var(--muted);
+    margin-top:6px;
+  }
+
   @media (max-width:560px){
     .hero{ padding:48px 18px 42px; }
     .controls{ padding:14px 18px; }
@@ -742,9 +807,9 @@
         <div class="brand-mark"></div>
         <div class="brand-name">Novah</div>
       </div>
-      <a class="ig-btn" href="https://instagram.com/novah.cl" target="_blank" rel="noopener">
+      <a class="ig-btn" href="https://instagram.com/novah.jerseys" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.148 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zm0 10.162a4 4 0 110-8 4 4 0 010 8zm6.406-10.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-        @novah.cl
+        @novah.jerseys
       </a>
     </div>
     <h1>Camisetas de fútbol,<br>de cualquier época.</h1>
@@ -844,6 +909,7 @@
 <div class="modal-overlay" id="wishlist-overlay">
   <div class="wishlist-modal">
     <h3 style="margin:0 0 16px; font-size:18px;">Tus camisetas guardadas</h3>
+    <div class="email-section" id="email-section"></div>
     <div id="wishlist-list"></div>
     <div class="wishlist-total" id="wishlist-total" style="display:none;">
       <span>Total</span>
@@ -919,6 +985,8 @@
   const STORAGE_KEY = "novah-products";
   const PASSCODE_KEY = "novah-passcode";
   const WISHLIST_KEY = "novah-wishlist";
+  const EMAIL_KEY = "novah-user-email";
+  let CURRENT_EMAIL = null;
   let EDIT_PASSCODE = "novah2026";
 
   const CATEGORIES = [
@@ -1131,11 +1199,36 @@
     }
   }
 
-  async function loadWishlist(){
+  function normalizeEmail(v){
+    return (v || "").trim().toLowerCase();
+  }
+
+  function wishlistStorageInfo(){
+    if(CURRENT_EMAIL){
+      return { key: `${WISHLIST_KEY}-${CURRENT_EMAIL}`, shared: true };
+    }
+    return { key: WISHLIST_KEY, shared: false };
+  }
+
+  async function loadEmail(){
     try{
-      const res = await window.storage.get(WISHLIST_KEY, false);
+      const res = await window.storage.get(EMAIL_KEY, false);
+      if(res && res.value){
+        CURRENT_EMAIL = res.value;
+      }
+    } catch(e){
+      CURRENT_EMAIL = null;
+    }
+  }
+
+  async function loadWishlist(){
+    const { key, shared } = wishlistStorageInfo();
+    try{
+      const res = await window.storage.get(key, shared);
       if(res && res.value){
         WISHLIST = JSON.parse(res.value);
+      } else {
+        WISHLIST = [];
       }
     } catch(e){
       WISHLIST = [];
@@ -1143,11 +1236,69 @@
   }
 
   async function saveWishlist(){
+    const { key, shared } = wishlistStorageInfo();
     try{
-      await window.storage.set(WISHLIST_KEY, JSON.stringify(WISHLIST), false);
+      await window.storage.set(key, JSON.stringify(WISHLIST), shared);
     } catch(e){
       console.error("No se pudo guardar la lista de guardados", e);
     }
+  }
+
+  function renderEmailSection(){
+    const el = document.getElementById("email-section");
+    if(CURRENT_EMAIL){
+      el.innerHTML = `
+        <div class="email-status">
+          <span>Guardando progreso para <strong>${CURRENT_EMAIL}</strong></span>
+          <button id="email-logout">Usar otro correo</button>
+        </div>
+      `;
+      document.getElementById("email-logout").addEventListener("click", async ()=>{
+        CURRENT_EMAIL = null;
+        try{ await window.storage.set(EMAIL_KEY, "", false); } catch(e){}
+        await loadWishlist();
+        updateWishlistCount();
+        renderGrid();
+        renderEmailSection();
+        renderWishlistModal();
+      });
+    } else {
+      el.innerHTML = `
+        <span class="email-label">Guarda tu progreso con tu correo</span>
+        <div class="email-row">
+          <input type="email" id="email-input" placeholder="tucorreo@ejemplo.com">
+          <button id="email-submit">Guardar</button>
+        </div>
+        <div class="email-hint">Así, si vuelves desde otro celular o navegador con el mismo correo, tus guardados seguirán ahí.</div>
+      `;
+      document.getElementById("email-submit").addEventListener("click", submitEmail);
+      document.getElementById("email-input").addEventListener("keydown", (e)=>{
+        if(e.key === "Enter") submitEmail();
+      });
+    }
+  }
+
+  async function submitEmail(){
+    const input = document.getElementById("email-input");
+    const email = normalizeEmail(input.value);
+    if(!email || !email.includes("@") || !email.includes(".")){
+      toast("Escribe un correo válido.");
+      return;
+    }
+    const localWishlist = WISHLIST;
+    CURRENT_EMAIL = email;
+    try{ await window.storage.set(EMAIL_KEY, CURRENT_EMAIL, false); } catch(e){}
+
+    await loadWishlist();
+    const merged = Array.from(new Set([...WISHLIST, ...localWishlist]));
+    WISHLIST = merged;
+    await saveWishlist();
+
+    updateWishlistCount();
+    renderGrid();
+    renderEmailSection();
+    renderWishlistModal();
+    toast("¡Listo! Tu progreso se guardará con ese correo.");
   }
 
   function isSaved(id){ return WISHLIST.includes(id); }
@@ -1197,6 +1348,7 @@
   }
 
   wishlistFab.addEventListener("click", ()=>{
+    renderEmailSection();
     renderWishlistModal();
     wishlistOverlay.classList.add("open");
   });
@@ -1592,6 +1744,7 @@
   (async function init(){
     await loadPasscode();
     await loadProducts();
+    await loadEmail();
     await loadWishlist();
     document.getElementById("stat-total").textContent = PRODUCTS.length;
     updateWishlistCount();
