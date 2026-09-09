@@ -1004,7 +1004,7 @@
     <h3 style="margin:0 0 12px; font-size:17px;">Comparte el catálogo</h3>
     <p>Que lo escaneen con la cámara de su celular para abrirlo directo.</p>
     <div style="background:var(--white); border:1px solid var(--line); border-radius:8px; padding:16px; display:inline-flex; margin-bottom:14px;">
-      <img id="qr-image" src="" alt="Código QR del catálogo" width="220" height="220" style="display:block;">
+      <div id="qr-container" style="width:220px; height:220px; display:flex; align-items:center; justify-content:center;"></div>
     </div>
     <div class="email-hint" style="margin-bottom:14px;">andymtzla777.github.io/novah-catalogo1</div>
     <div class="modal-actions" style="margin-top:0;">
@@ -1015,6 +1015,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
   const WHATSAPP_NUMBER = "5586760070";
   const STORAGE_KEY = "novah-products";
@@ -1421,10 +1422,25 @@
   const CATALOG_URL = "https://andymtzla777.github.io/novah-catalogo1";
   const qrTrigger = document.getElementById("qr-trigger");
   const qrOverlay = document.getElementById("qr-overlay");
-  const qrImage = document.getElementById("qr-image");
+  const qrContainer = document.getElementById("qr-container");
+  let qrGenerated = false;
 
   qrTrigger.addEventListener("click", ()=>{
-    qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(CATALOG_URL)}`;
+    if(!qrGenerated){
+      qrContainer.innerHTML = "";
+      try{
+        new QRCode(qrContainer, {
+          text: CATALOG_URL,
+          width: 220,
+          height: 220,
+          colorDark: "#12241c",
+          colorLight: "#fffdf8",
+        });
+        qrGenerated = true;
+      } catch(e){
+        qrContainer.innerHTML = `<span style="font-size:12px; color:var(--muted); padding:20px;">No se pudo generar el QR.</span>`;
+      }
+    }
     qrOverlay.classList.add("open");
   });
 
