@@ -1006,7 +1006,7 @@
     <div style="background:var(--white); border:1px solid var(--line); border-radius:8px; padding:16px; display:inline-flex; margin-bottom:14px;">
       <div id="qr-container" style="width:220px; height:220px; display:flex; align-items:center; justify-content:center;"></div>
     </div>
-    <div class="email-hint" style="margin-bottom:14px;">andymtzla777.github.io/novah-catalogo1</div>
+    <div class="email-hint" style="margin-bottom:14px;">claude.ai/public/artifacts/d246d22f...</div>
     <div class="modal-actions" style="margin-top:0;">
       <button class="btn btn-secondary" id="qr-close" style="flex:none; width:100%;">Cerrar</button>
     </div>
@@ -1016,12 +1016,24 @@
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyBhzih9rVwiP1E-Q-vEYrjpuobWVDuaads",
+    authDomain: "novah-jerseys.firebaseapp.com",
+    databaseURL: "https://novah-jerseys-default-rtdb.firebaseio.com",
+    projectId: "novah-jerseys",
+    storageBucket: "novah-jerseys.firebasestorage.app",
+    messagingSenderId: "362699649435",
+    appId: "1:362699649435:web:db26ce2420c8385db6713e",
+    measurementId: "G-5WFV2BKC7C"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+</script>
 <script>
   const WHATSAPP_NUMBER = "5586760070";
-  const STORAGE_KEY = "novah-products";
-  const PASSCODE_KEY = "novah-passcode";
-  const WISHLIST_KEY = "novah-wishlist";
-  const EMAIL_KEY = "novah-user-email";
   let CURRENT_EMAIL = null;
   let EDIT_PASSCODE = "novah2026";
 
@@ -1199,39 +1211,70 @@
 
   async function loadPasscode(){
     try{
-      const res = await window.storage.get(PASSCODE_KEY, true);
-      if(res && res.value){
-        EDIT_PASSCODE = res.value;
+      const doc = await db.collection("config").doc("settings").get();
+      if(doc.exists && doc.data().passcode){
+        EDIT_PASSCODE = doc.data().passcode;
       } else {
-        await window.storage.set(PASSCODE_KEY, EDIT_PASSCODE, true);
+        await db.collection("config").doc("settings").set({ passcode: EDIT_PASSCODE }, { merge: true });
       }
     } catch(e){
       console.error("No se pudo cargar la contraseña guardada, se usa la de por defecto.", e);
     }
   }
 
-  async function loadProducts(){
+  async function saveExistingPasscode(){
     try{
-      const res = await window.storage.get(STORAGE_KEY, true);
-      if(res && res.value){
-        PRODUCTS = JSON.parse(res.value);
-      } else {
-        PRODUCTS = DEFAULT_PRODUCTS;
-        await saveProducts();
-      }
+      await db.collection("config").doc("settings").set({ passcode: EDIT_PASSCODE }, { merge: true });
     } catch(e){
-      PRODUCTS = DEFAULT_PRODUCTS;
-      try { await saveProducts(); } catch(e2){ console.error("No se pudo inicializar el catálogo guardado", e2); }
+      console.error("No se pudo guardar la nueva contraseña", e);
+      throw e;
     }
   }
 
-  async function saveProducts(){
+  async function loadProducts(){
     try{
-      const result = await window.storage.set(STORAGE_KEY, JSON.stringify(PRODUCTS), true);
-      if(!result){ console.error("No se pudo guardar el catálogo"); }
+      const snap = await db.collection("products").get();
+      if(!snap.empty){
+        PRODUCTS = snap.docs.map(d => d.data());
+      } else {
+        PRODUCTS = DEFAULT_PRODUCTS;
+        await seedProducts();
+      }
     } catch(e){
-      console.error("Error guardando catálogo", e);
+      console.error("No se pudieron cargar los productos", e);
+      PRODUCTS = DEFAULT_PRODUCTS;
+    }
+  }
+
+  async function seedProducts(){
+    try{
+      const batch = db.batch();
+      DEFAULT_PRODUCTS.forEach(p => {
+        batch.set(db.collection("products").doc(p.id), p);
+      });
+      await batch.commit();
+    } catch(e){
+      console.error("No se pudo inicializar el catálogo en Firebase", e);
+    }
+  }
+
+  async function saveProduct(product){
+    try{
+      await db.collection("products").doc(product.id).set(product);
+    } catch(e){
+      console.error("Error guardando el producto", e);
       toast("No se pudo guardar el cambio. Intenta de nuevo.");
+      throw e;
+    }
+  }
+
+  async function deleteProductRemote(id){
+    try{
+      await db.collection("products").doc(id).delete();
+    } catch(e){
+      console.error("Error eliminando el producto", e);
+      toast("No se pudo eliminar. Intenta de nuevo.");
+      throw e;
     }
   }
 
@@ -1239,42 +1282,28 @@
     return (v || "").trim().toLowerCase();
   }
 
-  function wishlistStorageInfo(){
-    if(CURRENT_EMAIL){
-      return { key: `${WISHLIST_KEY}-${CURRENT_EMAIL}`, shared: true };
-    }
-    return { key: WISHLIST_KEY, shared: false };
-  }
-
   async function loadEmail(){
-    try{
-      const res = await window.storage.get(EMAIL_KEY, false);
-      if(res && res.value){
-        CURRENT_EMAIL = res.value;
-      }
-    } catch(e){
-      CURRENT_EMAIL = null;
-    }
+    CURRENT_EMAIL = null;
   }
 
   async function loadWishlist(){
-    const { key, shared } = wishlistStorageInfo();
+    if(!CURRENT_EMAIL){
+      WISHLIST = [];
+      return;
+    }
     try{
-      const res = await window.storage.get(key, shared);
-      if(res && res.value){
-        WISHLIST = JSON.parse(res.value);
-      } else {
-        WISHLIST = [];
-      }
+      const doc = await db.collection("wishlists").doc(CURRENT_EMAIL).get();
+      WISHLIST = (doc.exists && doc.data().items) ? doc.data().items : [];
     } catch(e){
+      console.error("No se pudo cargar tu lista guardada", e);
       WISHLIST = [];
     }
   }
 
   async function saveWishlist(){
-    const { key, shared } = wishlistStorageInfo();
+    if(!CURRENT_EMAIL) return;
     try{
-      await window.storage.set(key, JSON.stringify(WISHLIST), shared);
+      await db.collection("wishlists").doc(CURRENT_EMAIL).set({ items: WISHLIST });
     } catch(e){
       console.error("No se pudo guardar la lista de guardados", e);
     }
@@ -1291,7 +1320,6 @@
       `;
       document.getElementById("email-logout").addEventListener("click", async ()=>{
         CURRENT_EMAIL = null;
-        try{ await window.storage.set(EMAIL_KEY, "", false); } catch(e){}
         await loadWishlist();
         updateWishlistCount();
         renderGrid();
@@ -1323,7 +1351,6 @@
     }
     const localWishlist = WISHLIST;
     CURRENT_EMAIL = email;
-    try{ await window.storage.set(EMAIL_KEY, CURRENT_EMAIL, false); } catch(e){}
 
     await loadWishlist();
     const merged = Array.from(new Set([...WISHLIST, ...localWishlist]));
@@ -1419,7 +1446,7 @@
   }
   closeOverlayOnBackdrop(wishlistOverlay);
 
-  const CATALOG_URL = "https://andymtzla777.github.io/novah-catalogo1";
+  const CATALOG_URL = "https://claude.ai/public/artifacts/d246d22f-4c37-4060-b2ac-b57a5b2c711f";
   const qrTrigger = document.getElementById("qr-trigger");
   const qrOverlay = document.getElementById("qr-overlay");
   const qrContainer = document.getElementById("qr-container");
@@ -1590,8 +1617,8 @@
   async function deleteProduct(id){
     const ok = await confirmDialog("¿Eliminar esta camiseta del catálogo?");
     if(!ok) return;
+    try{ await deleteProductRemote(id); } catch(e){ return; }
     PRODUCTS = PRODUCTS.filter(p => p.id !== id);
-    await saveProducts();
     toast("Camiseta eliminada");
     renderGrid();
   }
@@ -1652,8 +1679,8 @@
   modalDeleteBtn.addEventListener("click", async ()=>{
     const ok = await confirmDialog("¿Eliminar esta camiseta del catálogo?");
     if(!ok) return;
+    try{ await deleteProductRemote(editingId); } catch(e){ return; }
     PRODUCTS = PRODUCTS.filter(p => p.id !== editingId);
-    await saveProducts();
     document.getElementById("stat-total").textContent = PRODUCTS.length;
     modalOverlay.classList.remove("open");
     toast("Camiseta eliminada");
@@ -1673,21 +1700,24 @@
       return;
     }
 
+    let productToSave;
     if(editingId){
       const p = PRODUCTS.find(x=>x.id===editingId);
       p.name = name; p.meta = meta; p.price = price; p.cat = cat; p.region = region;
       if(pendingImage) p.image = pendingImage;
+      productToSave = p;
     } else {
-      PRODUCTS.push({
+      productToSave = {
         id: "p" + Date.now(),
         cat, region, name, meta, price,
         image: pendingImage || null,
         colors: ["#1f5c40", "#f5f1e8"],
         num: "1"
-      });
+      };
+      PRODUCTS.push(productToSave);
     }
 
-    await saveProducts();
+    try{ await saveProduct(productToSave); } catch(e){ return; }
     document.getElementById("stat-total").textContent = PRODUCTS.length;
     modalOverlay.classList.remove("open");
     activeCat = cat;
@@ -1730,7 +1760,7 @@
     }
     EDIT_PASSCODE = p1;
     try{
-      await window.storage.set(PASSCODE_KEY, EDIT_PASSCODE, true);
+      await saveExistingPasscode();
       changepassOverlay.classList.remove("open");
       toast("Contraseña actualizada");
     } catch(e){
