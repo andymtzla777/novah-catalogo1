@@ -170,6 +170,44 @@
     font-size:13px;
     color:rgba(255,253,248,0.6);
   }
+  .wholesale-banner{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-top:30px;
+    padding:14px 18px;
+    background:rgba(200,153,46,0.12);
+    border:1px solid rgba(200,153,46,0.5);
+    border-radius:10px;
+  }
+  .wholesale-icon{
+    font-size:22px;
+    flex:none;
+  }
+  .wholesale-banner p{
+    margin:0;
+    flex:1;
+    min-width:180px;
+    font-size:14px;
+    line-height:1.4;
+    color:var(--white);
+  }
+  .wholesale-banner p strong{
+    color:var(--gold);
+  }
+  .wholesale-btn{
+    flex:none;
+    background:var(--gold);
+    color:var(--pitch-deep);
+    text-decoration:none;
+    font-weight:700;
+    font-size:13px;
+    padding:9px 18px;
+    border-radius:100px;
+    white-space:nowrap;
+  }
+  .wholesale-btn:hover{ background:#dcae4a; }
 
   /* ---------- NAV / FILTERS ---------- */
   .controls{
@@ -915,6 +953,11 @@
       <div><strong id="stat-total">0</strong><span>Camisetas</span></div>
       <div><strong>4</strong><span>Colecciones</span></div>
       <div><strong>3</strong><span>Regiones</span></div>
+    </div>
+    <div class="wholesale-banner">
+      <span class="wholesale-icon">👕</span>
+      <p>Novah también viste a tu equipo — contáctanos para cotizar. <strong>Precio MAYOREO.</strong></p>
+      <a class="wholesale-btn" href="https://wa.me/5586760070?text=Hola%20Novah%2C%20quiero%20cotizar%20camisetas%20al%20mayoreo%20para%20mi%20equipo." target="_blank" rel="noopener">Cotizar</a>
     </div>
   </div>
 </div>
