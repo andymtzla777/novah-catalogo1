@@ -222,6 +222,50 @@
     max-width:1120px;
     margin:0 auto;
   }
+  .search-wrap{
+    position:relative;
+    margin-bottom:14px;
+  }
+  .search-wrap input{
+    width:100%;
+    padding:11px 40px;
+    border:1px solid var(--line);
+    border-radius:100px;
+    font-size:14px;
+    background:var(--paper-2);
+    color:var(--ink);
+  }
+  .search-wrap input::placeholder{ color:var(--muted); }
+  .search-icon{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    width:16px;
+    height:16px;
+    fill:none;
+    stroke:var(--muted);
+    stroke-width:2;
+    pointer-events:none;
+  }
+  .search-clear{
+    position:absolute;
+    right:8px;
+    top:50%;
+    transform:translateY(-50%);
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    border:none;
+    background:var(--line);
+    color:var(--ink);
+    font-size:14px;
+    line-height:1;
+    cursor:pointer;
+    display:none;
+    align-items:center;
+    justify-content:center;
+  }
   .tabs-row{
     display:flex;
     align-items:center;
@@ -951,7 +995,7 @@
     <p>Retro, actuales, temporadas pasadas y selecciones. Elige tu camiseta y arma tu pedido directo por WhatsApp.</p>
     <div class="hero-stats">
       <div><strong id="stat-total">0</strong><span>Camisetas</span></div>
-      <div><strong>4</strong><span>Colecciones</span></div>
+      <div><strong>5</strong><span>Colecciones</span></div>
       <div><strong>3</strong><span>Regiones</span></div>
     </div>
     <div class="wholesale-banner">
@@ -964,6 +1008,11 @@
 
 <div class="controls">
   <div class="controls-inner">
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor"/><line x1="21" y1="21" x2="16.65" y2="16.65" stroke="currentColor"/></svg>
+      <input type="text" id="search-input" placeholder="Buscar equipo o camiseta...">
+      <button class="search-clear" id="search-clear" aria-label="Limpiar búsqueda">×</button>
+    </div>
     <div class="tabs-row">
       <div class="tabs" id="tabs"></div>
       <div style="display:flex; gap:8px;">
@@ -1026,6 +1075,7 @@
         <option value="actuales">Actuales</option>
         <option value="temporadas">Temporadas pasadas</option>
         <option value="selecciones">Selecciones</option>
+        <option value="selecciones-retro">Selecciones retro</option>
       </select>
     </div>
     <div class="field" id="f-region-wrap">
@@ -1162,6 +1212,7 @@
     { id: "actuales", label: "Actuales", hasRegions: true },
     { id: "temporadas", label: "Temporadas pasadas", hasRegions: true },
     { id: "selecciones", label: "Selecciones", hasRegions: false },
+    { id: "selecciones-retro", label: "Selecciones retro", hasRegions: false },
   ];
   const REGIONS = [
     { id: "europa", label: "Europa" },
@@ -1261,6 +1312,11 @@
   let editMode = false;
   let editingId = null;
   let pendingImages = [];
+  let searchQuery = "";
+
+  function normalizeText(s){
+    return (s || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
 
   function getImages(p){
     if(p.images && p.images.length) return p.images;
@@ -1268,6 +1324,8 @@
     return [];
   }
 
+  const searchInput = document.getElementById("search-input");
+  const searchClear = document.getElementById("search-clear");
   const tabsEl = document.getElementById("tabs");
   const subtabsEl = document.getElementById("subtabs");
   const gridEl = document.getElementById("grid");
@@ -1637,6 +1695,11 @@
         activeCat = btn.dataset.cat;
         const cfg = CATEGORIES.find(c=>c.id===activeCat);
         activeRegion = cfg.hasRegions ? "europa" : null;
+        if(searchQuery){
+          searchQuery = "";
+          searchInput.value = "";
+          searchClear.style.display = "none";
+        }
         renderTabs();
         renderSubtabs();
         renderGrid();
@@ -1670,12 +1733,21 @@
   }
 
   function renderGrid(){
-    const cfg = CATEGORIES.find(c=>c.id===activeCat);
-    headingEl.textContent = cfg.label;
-
-    let items = PRODUCTS.filter(p => p.cat === activeCat);
-    if(cfg.hasRegions){
-      items = items.filter(p => p.region === activeRegion);
+    let items;
+    if(searchQuery){
+      const q = normalizeText(searchQuery);
+      items = PRODUCTS.filter(p => normalizeText(p.name + " " + p.meta).includes(q));
+      headingEl.textContent = `Resultados para "${searchQuery}"`;
+      subtabsEl.classList.add("hidden");
+      subtabsEl.innerHTML = "";
+    } else {
+      const cfg = CATEGORIES.find(c=>c.id===activeCat);
+      headingEl.textContent = cfg.label;
+      items = PRODUCTS.filter(p => p.cat === activeCat);
+      if(cfg.hasRegions){
+        items = items.filter(p => p.region === activeRegion);
+      }
+      renderSubtabs();
     }
     countEl.textContent = `${items.length} camiseta${items.length===1?'':'s'}`;
 
@@ -2040,6 +2112,20 @@
   });
   document.getElementById("secq-cancel").addEventListener("click", ()=>{
     secqOverlay.classList.remove("open");
+  });
+
+  searchInput.addEventListener("input", ()=>{
+    searchQuery = searchInput.value.trim();
+    searchClear.style.display = searchQuery ? "flex" : "none";
+    renderGrid();
+  });
+
+  searchClear.addEventListener("click", ()=>{
+    searchInput.value = "";
+    searchQuery = "";
+    searchClear.style.display = "none";
+    renderGrid();
+    searchInput.focus();
   });
 
   (async function init(){
