@@ -922,6 +922,27 @@
     main{ padding:30px 18px 70px; }
     .wishlist-fab{ right:14px; bottom:14px; padding:12px 16px; }
   }
+
+  .forgot-link{ display:block; margin:10px 0 0; background:none; border:none; color:var(--pitch,#1f5a3a); font-size:13px; text-decoration:underline; cursor:pointer; padding:0; font-family:inherit; }
+  .small-modal input[type=email]{ width:100%; padding:11px 12px; border:1px solid #cfd8d2; border-radius:10px; font-size:15px; font-family:inherit; box-sizing:border-box; }
+  .wholesale-actions{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .wholesale-btn.alt{ background:transparent; color:#f3d98b; border:1.5px solid #dcae4a; cursor:pointer; font-family:inherit; }
+  .wholesale-btn.alt:hover{ background:rgba(220,174,74,.18); }
+  button.wholesale-btn{ border:none; cursor:pointer; font-family:inherit; }
+  .ask-block{ margin:26px 0 8px; padding:18px 16px; border-radius:14px; background:#fff; border:1.5px dashed #b9c7bd; text-align:center; }
+  .ask-block p{ margin:0 0 12px; font-size:15px; font-weight:600; }
+  .ask-btn{ display:inline-flex; align-items:center; gap:6px; padding:10px 22px; border-radius:999px; background:#25d366; color:#fff; font-weight:700; font-size:14px; border:none; cursor:pointer; font-family:inherit; }
+  .uni-modal{ background:#fff; border-radius:16px; width:min(94vw,720px); max-height:88vh; overflow:auto; padding:18px; box-sizing:border-box; }
+  .uni-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:8px; }
+  .uni-head h3{ margin:0; font-size:18px; }
+  .uni-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; }
+  .uni-item{ position:relative; border-radius:10px; overflow:hidden; background:#eee; aspect-ratio:1/1; }
+  .uni-item img{ width:100%; height:100%; object-fit:cover; display:block; cursor:zoom-in; }
+  .uni-del{ position:absolute; top:6px; right:6px; background:rgba(180,30,30,.92); color:#fff; border:none; border-radius:999px; padding:4px 9px; font-size:12px; cursor:pointer; }
+  .uni-empty{ text-align:center; color:#667; padding:24px 8px; font-size:14px; }
+  .uni-big{ position:fixed; inset:0; background:rgba(0,0,0,.9); display:none; align-items:center; justify-content:center; z-index:3000; }
+  .uni-big.open{ display:flex; }
+  .uni-big img{ max-width:96vw; max-height:92vh; border-radius:8px; }
 </style>
 </head>
 <body>
@@ -1001,7 +1022,10 @@
     <div class="wholesale-banner">
       <span class="wholesale-icon">👕</span>
       <p>Novah también viste a tu equipo — contáctanos para cotizar. <strong>Precio MAYOREO.</strong></p>
-      <a class="wholesale-btn" href="https://wa.me/5586760070?text=Hola%20Novah%2C%20quiero%20cotizar%20camisetas%20al%20mayoreo%20para%20mi%20equipo." target="_blank" rel="noopener">Cotizar</a>
+      <div class="wholesale-actions">
+        <a class="wholesale-btn" href="https://wa.me/5586760070?text=Hola%20Novah%2C%20quiero%20cotizar%20camisetas%20al%20mayoreo%20para%20mi%20equipo." target="_blank" rel="noopener">Cotizar</a>
+        <button type="button" class="wholesale-btn alt" id="uniforms-btn">Uniformes</button>
+      </div>
     </div>
   </div>
 </div>
@@ -1016,7 +1040,8 @@
     <div class="tabs-row">
       <div class="tabs" id="tabs"></div>
       <div style="display:flex; gap:8px;">
-        <button class="edit-toggle hidden" id="change-pass-btn" style="display:none;">Cambiar contraseña</button>
+        <button class="edit-toggle hidden" id="recovery-btn" style="display:none;">Correo de recuperación</button>
+      <button class="edit-toggle hidden" id="change-pass-btn" style="display:none;">Cambiar contraseña</button>
         <button class="edit-toggle" id="edit-toggle">Salir de edición</button>
       </div>
     </div>
@@ -1036,6 +1061,10 @@
   </div>
   <div class="grid" id="grid"></div>
   <div class="empty" id="empty" style="display:none;">No hay camisetas en esta categoría todavía.</div>
+  <div class="ask-block">
+    <p>Si no encuentras la camiseta que buscas pregunta por existencia</p>
+    <button type="button" class="ask-btn" id="ask-btn">💬 Preguntar</button>
+  </div>
 </main>
 
 <footer>
@@ -1120,6 +1149,7 @@
     <p>Escribe la contraseña para poder editar el catálogo.</p>
     <input type="password" id="pass-input" placeholder="Contraseña">
     <div class="field-error" id="pass-error"></div>
+    <button type="button" class="forgot-link" id="forgot-link">Se me olvidó la contraseña</button>
     <div class="modal-actions">
       <button class="btn btn-secondary" id="pass-cancel">Cancelar</button>
       <button class="btn btn-primary" id="pass-submit">Entrar</button>
@@ -1156,6 +1186,52 @@
   </div>
 </div>
 
+<!-- FORGOT PASSWORD MODAL -->
+<div class="modal-overlay" id="forgot-overlay">
+  <div class="small-modal">
+    <h3 style="margin:0 0 12px; font-size:17px;">Recuperar contraseña</h3>
+    <p>Escribe tu correo de recuperación. Te enviaremos un enlace para crear una contraseña nueva.</p>
+    <input type="email" id="forgot-email" placeholder="tucorreo@ejemplo.com" autocomplete="email">
+    <div class="field-error" id="forgot-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="forgot-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="forgot-submit">Enviar enlace</button>
+    </div>
+  </div>
+</div>
+
+<!-- RECOVERY EMAIL MODAL (edit mode) -->
+<div class="modal-overlay" id="recovery-overlay">
+  <div class="small-modal">
+    <h3 style="margin:0 0 12px; font-size:17px;">Correo de recuperación</h3>
+    <p>Registra el correo que podrá restablecer la contraseña si se te olvida.</p>
+    <input type="email" id="recovery-email" placeholder="tucorreo@ejemplo.com" autocomplete="email">
+    <div class="field-error" id="recovery-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="recovery-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="recovery-submit">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- UNIFORMS MODAL -->
+<div class="modal-overlay" id="uniforms-overlay">
+  <div class="uni-modal">
+    <div class="uni-head">
+      <h3>Uniformes</h3>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-primary" id="uni-add" style="display:none;">+ Agregar fotos</button>
+        <button class="btn btn-secondary" id="uni-close">Cerrar</button>
+      </div>
+    </div>
+    <input type="file" id="uni-file" accept="image/*" multiple style="display:none;">
+    <div class="uni-grid" id="uni-grid"></div>
+    <div class="uni-empty" id="uni-empty" style="display:none;">Pronto subiremos fotos de los uniformes que hemos hecho.</div>
+    <p style="text-align:center; margin:14px 0 0;"><a class="wholesale-btn" style="background:#25d366;color:#fff;" href="https://wa.me/5586760070?text=Hola%20Novah%2C%20quiero%20cotizar%20uniformes%20para%20mi%20equipo." target="_blank" rel="noopener">Cotizar uniformes</a></p>
+  </div>
+</div>
+<div class="uni-big" id="uni-big"><img id="uni-big-img" alt=""></div>
+
 <!-- CONFIRM MODAL -->
 <div class="modal-overlay" id="confirm-overlay">
   <div class="small-modal">
@@ -1188,6 +1264,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script>
   const firebaseConfig = {
     apiKey: "AIzaSyBhzih9rVwiP1E-Q-vEYrjpuobWVDuaads",
@@ -2009,6 +2086,9 @@
     editToggle.textContent = editMode ? "Salir de edición" : "Editar catálogo";
     editToggle.classList.toggle("on", editMode);
     changePassBtn.style.display = editMode ? "inline-flex" : "none";
+    document.getElementById("recovery-btn").style.display = editMode ? "inline-flex" : "none";
+    document.getElementById("uni-add").style.display = editMode ? "inline-flex" : "none";
+    if(typeof renderUniforms === "function") renderUniforms();
     renderGrid();
   }
 
@@ -2039,6 +2119,7 @@
     try{
       await saveExistingPasscode();
       changepassOverlay.classList.remove("open");
+      resetMode = false;
       toast("Contraseña actualizada");
     } catch(e){
       changepassError.textContent = "No se pudo guardar la nueva contraseña, intenta de nuevo.";
@@ -2128,6 +2209,162 @@
     searchInput.focus();
   });
 
+  // ===== Preguntar por existencia =====
+  document.getElementById("ask-btn").addEventListener("click", ()=>{
+    let msg = "Hola Novah, quiero preguntar por existencia de una camiseta.";
+    if(searchQuery) msg = "Hola Novah, quiero preguntar por existencia de: " + searchQuery + ".";
+    window.open("https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(msg), "_blank", "noopener");
+  });
+
+  // ===== Recuperación de contraseña por correo =====
+  async function hashEmail(email){
+    const data = new TextEncoder().encode(email.trim().toLowerCase());
+    const buf = await crypto.subtle.digest("SHA-256", data);
+    return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  }
+  const validEmail = e => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
+  const forgotOverlay = document.getElementById("forgot-overlay");
+  const forgotEmail = document.getElementById("forgot-email");
+  const forgotError = document.getElementById("forgot-error");
+  const recoveryOverlay = document.getElementById("recovery-overlay");
+  const recoveryEmail = document.getElementById("recovery-email");
+  const recoveryError = document.getElementById("recovery-error");
+  let resetMode = false; // true cuando el usuario llegó desde el enlace del correo
+
+  document.getElementById("forgot-link").addEventListener("click", ()=>{
+    passOverlay.classList.remove("open");
+    forgotEmail.value = ""; forgotError.textContent = "";
+    forgotOverlay.classList.add("open");
+    setTimeout(()=>forgotEmail.focus(),50);
+  });
+  document.getElementById("forgot-cancel").addEventListener("click", ()=> forgotOverlay.classList.remove("open"));
+  document.getElementById("forgot-submit").addEventListener("click", async ()=>{
+    const email = forgotEmail.value.trim().toLowerCase();
+    if(!validEmail(email)){ forgotError.textContent = "Escribe un correo válido."; return; }
+    forgotError.textContent = "Enviando…";
+    try{
+      const doc = await db.collection("config").doc("settings").get();
+      const stored = doc.exists ? doc.data().recoveryHash : null;
+      if(!stored){ forgotError.textContent = "Aún no hay un correo de recuperación registrado. Entra a modo edición y regístralo."; return; }
+      if(stored !== await hashEmail(email)){ forgotError.textContent = "Ese correo no coincide con el registrado."; return; }
+      await firebase.auth().sendSignInLinkToEmail(email, { url: CATALOG_URL + "?reset=1", handleCodeInApp: true });
+      try{ localStorage.setItem("novahResetEmail", email); }catch(e){}
+      forgotOverlay.classList.remove("open");
+      toast("Te enviamos un enlace a tu correo (revisa también spam)");
+    }catch(e){
+      console.error(e);
+      forgotError.textContent = "No se pudo enviar el correo. Revisa tu conexión e inténtalo de nuevo.";
+    }
+  });
+
+  document.getElementById("recovery-btn").addEventListener("click", ()=>{
+    recoveryEmail.value = ""; recoveryError.textContent = "";
+    recoveryOverlay.classList.add("open");
+    setTimeout(()=>recoveryEmail.focus(),50);
+  });
+  document.getElementById("recovery-cancel").addEventListener("click", ()=> recoveryOverlay.classList.remove("open"));
+  document.getElementById("recovery-submit").addEventListener("click", async ()=>{
+    const email = recoveryEmail.value.trim().toLowerCase();
+    if(!validEmail(email)){ recoveryError.textContent = "Escribe un correo válido."; return; }
+    try{
+      await db.collection("config").doc("settings").set({ passcode: EDIT_PASSCODE, recoveryHash: await hashEmail(email) }, { merge: true });
+      recoveryOverlay.classList.remove("open");
+      toast("Correo de recuperación guardado");
+    }catch(e){
+      console.error(e);
+      recoveryError.textContent = "No se pudo guardar. Inténtalo de nuevo.";
+    }
+  });
+
+  // Al volver desde el enlace del correo: verificar y abrir "nueva contraseña"
+  async function handleResetLink(){
+    try{
+      const auth = firebase.auth();
+      if(!auth.isSignInWithEmailLink(window.location.href)) return;
+      let email = null;
+      try{ email = localStorage.getItem("novahResetEmail"); }catch(e){}
+      if(!email) email = (window.prompt("Confirma tu correo de recuperación") || "").trim().toLowerCase();
+      if(!email) return;
+      await auth.signInWithEmailLink(email, window.location.href);
+      const doc = await db.collection("config").doc("settings").get();
+      const stored = doc.exists ? doc.data().recoveryHash : null;
+      if(!stored || stored !== await hashEmail(email)){ toast("El correo no coincide con el registrado"); return; }
+      try{ localStorage.removeItem("novahResetEmail"); }catch(e){}
+      history.replaceState(null, "", window.location.pathname);
+      resetMode = true;
+      newpassInput.value = ""; newpassConfirm.value = ""; changepassError.textContent = "";
+      changepassOverlay.classList.add("open");
+      toast("Correo verificado. Crea tu nueva contraseña");
+    }catch(e){
+      console.error(e);
+      toast("El enlace no es válido o ya expiró");
+    }
+  }
+
+  // ===== Uniformes =====
+  const uniOverlay = document.getElementById("uniforms-overlay");
+  const uniGrid = document.getElementById("uni-grid");
+  const uniEmpty = document.getElementById("uni-empty");
+  let UNIFORMS = [];
+  let uniLoaded = false;
+
+  async function loadUniforms(){
+    try{
+      const snap = await db.collection("uniforms").get();
+      UNIFORMS = snap.docs.map(d=>({ docId:d.id, ...d.data() })).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+      uniLoaded = true;
+    }catch(e){ console.error(e); toast("No se pudieron cargar los uniformes"); }
+  }
+  function renderUniforms(){
+    uniGrid.innerHTML = UNIFORMS.map(u =>
+      '<div class="uni-item"><img src="'+u.image+'" alt="Uniforme" loading="lazy" data-src="'+u.docId+'">'+
+      (editMode ? '<button class="uni-del" data-del="'+u.docId+'">Eliminar</button>' : '')+'</div>').join("");
+    uniEmpty.style.display = UNIFORMS.length ? "none" : "block";
+  }
+  document.getElementById("uniforms-btn").addEventListener("click", async ()=>{
+    uniOverlay.classList.add("open");
+    document.getElementById("uni-add").style.display = editMode ? "inline-flex" : "none";
+    if(!uniLoaded) await loadUniforms();
+    renderUniforms();
+  });
+  document.getElementById("uni-close").addEventListener("click", ()=> uniOverlay.classList.remove("open"));
+  closeOverlayOnBackdrop(uniOverlay);
+  document.getElementById("uni-add").addEventListener("click", ()=> document.getElementById("uni-file").click());
+  document.getElementById("uni-file").addEventListener("change", async (e)=>{
+    const files = Array.from(e.target.files || []);
+    e.target.value = "";
+    let ok = 0;
+    for(const f of files){
+      try{
+        const image = await resizeImage(f);
+        const createdAt = Date.now() + ok;
+        const ref = await db.collection("uniforms").add({ image, createdAt });
+        UNIFORMS.unshift({ docId: ref.id, image, createdAt });
+        ok++;
+      }catch(err){ console.error(err); toast("No se pudo subir una foto"); }
+    }
+    if(ok){ renderUniforms(); toast(ok + " foto(s) agregada(s)"); }
+  });
+  uniGrid.addEventListener("click", async (e)=>{
+    const del = e.target.closest("[data-del]");
+    if(del){
+      const ok = await confirmDialog("¿Eliminar esta foto?");
+      if(!ok) return;
+      try{
+        await db.collection("uniforms").doc(del.dataset.del).delete();
+        UNIFORMS = UNIFORMS.filter(u=>u.docId !== del.dataset.del);
+        renderUniforms();
+      }catch(err){ toast("No se pudo eliminar"); }
+      return;
+    }
+    const img = e.target.closest("img");
+    if(img){
+      document.getElementById("uni-big-img").src = img.src;
+      document.getElementById("uni-big").classList.add("open");
+    }
+  });
+  document.getElementById("uni-big").addEventListener("click", ()=> document.getElementById("uni-big").classList.remove("open"));
+
   (async function init(){
     await loadPasscode();
     await loadProducts();
@@ -2139,6 +2376,7 @@
     renderSubtabs();
     renderGrid();
     startQuoteRotation();
+    handleResetLink();
   })();
 </script>
 
