@@ -935,14 +935,32 @@
   .uni-modal{ background:#fff; border-radius:16px; width:min(94vw,720px); max-height:88vh; overflow:auto; padding:18px; box-sizing:border-box; }
   .uni-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; gap:8px; }
   .uni-head h3{ margin:0; font-size:18px; }
-  .uni-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:10px; }
-  .uni-item{ position:relative; border-radius:10px; overflow:hidden; background:#eee; aspect-ratio:1/1; }
-  .uni-item img{ width:100%; height:100%; object-fit:cover; display:block; cursor:zoom-in; }
-  .uni-del{ position:absolute; top:6px; right:6px; background:rgba(180,30,30,.92); color:#fff; border:none; border-radius:999px; padding:4px 9px; font-size:12px; cursor:pointer; }
-  .uni-empty{ text-align:center; color:#667; padding:24px 8px; font-size:14px; }
-  .uni-big{ position:fixed; inset:0; background:rgba(0,0,0,.9); display:none; align-items:center; justify-content:center; z-index:3000; }
-  .uni-big.open{ display:flex; }
-  .uni-big img{ max-width:96vw; max-height:92vh; border-radius:8px; }
+  .uni-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; }
+  .uni-grid .card{ cursor:pointer; }
+  .uni-grid .card-body{ padding:10px 12px 12px; gap:4px; }
+  .uni-grid .card-body h3{ font-size:14px; }
+  .uni-count{ position:absolute; bottom:8px; right:8px; background:rgba(0,0,0,.65); color:#fff; font-size:11px; padding:2px 8px; border-radius:999px; }
+  .jersey img, .jersey-carousel{ cursor:zoom-in; }
+  .lb{ position:fixed; inset:0; background:rgba(10,20,15,.94); display:none; z-index:3000; flex-direction:column; align-items:center; justify-content:center; padding:14px; box-sizing:border-box; }
+  .lb.open{ display:flex; }
+  .lb-close{ position:absolute; top:10px; right:14px; background:rgba(255,255,255,.15); color:#fff; border:none; width:40px; height:40px; border-radius:50%; font-size:24px; cursor:pointer; z-index:2; }
+  .lb-stage{ position:relative; width:min(96vw,640px); flex:1 1 auto; min-height:0; display:flex; align-items:center; justify-content:center; touch-action:pan-y; }
+  .lb-stage img{ max-width:100%; max-height:100%; object-fit:contain; border-radius:8px; user-select:none; -webkit-user-drag:none; }
+  .lb-nav{ position:absolute; top:50%; transform:translateY(-50%); background:rgba(255,255,255,.18); color:#fff; border:none; width:42px; height:42px; border-radius:50%; font-size:22px; cursor:pointer; }
+  .lb-prev{ left:4px; } .lb-next{ right:4px; }
+  .lb-dots{ display:flex; gap:6px; margin:10px 0 4px; }
+  .lb-dots span{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.35); }
+  .lb-dots span.active{ background:#fff; }
+  .lb-info{ color:#fff; text-align:center; width:min(96vw,640px); padding:6px 0 4px; }
+  .lb-info h3{ margin:0 0 4px; font-size:18px; }
+  .lb-info .m{ font-size:13px; opacity:.8; white-space:pre-line; }
+  .lb-info .p{ font-family:'Anton',sans-serif; font-size:22px; margin:6px 0; }
+  .lb-info a{ display:inline-block; margin-top:6px; padding:10px 22px; border-radius:999px; background:#25d366; color:#fff; font-weight:700; font-size:14px; text-decoration:none; }
+  .uni-photos-row{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px; }
+  .uni-photos-row .thumb-wrap{ position:relative; width:64px; height:64px; }
+  .uni-photos-row .thumb-wrap img{ width:100%; height:100%; object-fit:cover; border-radius:6px; }
+  .uni-photos-row .thumb-remove{ position:absolute; top:-6px; right:-6px; width:20px; height:20px; border-radius:50%; border:none; background:#b41e1e; color:#fff; font-size:13px; cursor:pointer; line-height:1; }
+  .uni-form-modal input[type=text], .uni-form-modal textarea{ width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; font-family:inherit; box-sizing:border-box; background:var(--paper); color:var(--ink); }
 </style>
 </head>
 <body>
@@ -1224,13 +1242,39 @@
         <button class="btn btn-secondary" id="uni-close">Cerrar</button>
       </div>
     </div>
-    <input type="file" id="uni-file" accept="image/*" multiple style="display:none;">
     <div class="uni-grid" id="uni-grid"></div>
     <div class="uni-empty" id="uni-empty" style="display:none;">Pronto subiremos fotos de los uniformes que hemos hecho.</div>
     <p style="text-align:center; margin:14px 0 0;"><a class="wholesale-btn" style="background:#25d366;color:#fff;" href="https://wa.me/5586760070?text=Hola%20Novah%2C%20quiero%20cotizar%20uniformes%20para%20mi%20equipo." target="_blank" rel="noopener">Cotizar uniformes</a></p>
   </div>
 </div>
-<div class="uni-big" id="uni-big"><img id="uni-big-img" alt=""></div>
+<div class="lb" id="lb">
+  <button class="lb-close" id="lb-close" aria-label="Cerrar">×</button>
+  <div class="lb-stage" id="lb-stage">
+    <button class="lb-nav lb-prev" id="lb-prev" aria-label="Anterior">‹</button>
+    <img id="lb-img" alt="" draggable="false">
+    <button class="lb-nav lb-next" id="lb-next" aria-label="Siguiente">›</button>
+  </div>
+  <div class="lb-dots" id="lb-dots"></div>
+  <div class="lb-info" id="lb-info"></div>
+</div>
+
+<div class="modal-overlay" id="uniform-form-overlay" style="z-index:150;">
+  <div class="small-modal uni-form-modal" style="max-height:90vh; overflow:auto;">
+    <h3 style="margin:0 0 12px; font-size:17px;" id="uf-title">Agregar uniforme</h3>
+    <div class="field"><label>Fotos</label>
+      <div class="uni-photos-row" id="uf-photos"></div>
+      <button type="button" class="btn btn-secondary" id="uf-addphotos">+ Elegir fotos</button>
+      <input type="file" id="uf-file" accept="image/*" multiple style="display:none;">
+    </div>
+    <div class="field"><label>Equipo / nombre</label><input type="text" id="uf-name" placeholder="Ej. Club Deportivo Aztecas"></div>
+    <div class="field"><label>Descripción</label><textarea id="uf-meta" rows="3" placeholder="Ej. Uniforme completo · sublimado · tallas S-XL"></textarea></div>
+    <div class="field-error" id="uf-error"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" id="uf-cancel">Cancelar</button>
+      <button class="btn btn-primary" id="uf-save">Guardar</button>
+    </div>
+  </div>
+</div>
 
 <!-- CONFIRM MODAL -->
 <div class="modal-overlay" id="confirm-overlay">
@@ -1918,6 +1962,7 @@
       }
 
       carousel.addEventListener("pointerdown", (e)=>{
+        window.__carouselDragged = false;
         dragging = true;
         startX = e.clientX;
         track.style.transition = "none";
@@ -1934,6 +1979,7 @@
         dragging = false;
         track.style.transition = "transform .25s ease";
         const dx = e.clientX - startX;
+        window.__carouselDragged = Math.abs(dx) > 8;
         const threshold = carousel.clientWidth * 0.18;
         if(dx > threshold) goTo(index - 1);
         else if(dx < -threshold) goTo(index + 1);
@@ -2315,10 +2361,77 @@
       uniLoaded = true;
     }catch(e){ console.error(e); toast("No se pudieron cargar los uniformes"); }
   }
+  const esc = t => String(t==null?"":t).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const uniImgs = u => (u.images && u.images.length) ? u.images : (u.image ? [u.image] : []);
+
+  // ===== Visor grande (camisetas y uniformes) =====
+  const lb = document.getElementById("lb");
+  const lbImg = document.getElementById("lb-img");
+  const lbDots = document.getElementById("lb-dots");
+  let lbImages = [], lbIndex = 0;
+  function lbShow(i){
+    lbIndex = (i + lbImages.length) % lbImages.length;
+    lbImg.src = lbImages[lbIndex];
+    lbDots.innerHTML = lbImages.length > 1 ? lbImages.map((_,k)=>'<span class="'+(k===lbIndex?'active':'')+'"></span>').join("") : "";
+    document.getElementById("lb-prev").style.display = document.getElementById("lb-next").style.display = lbImages.length > 1 ? "block" : "none";
+  }
+  function openLightbox(o){
+    lbImages = o.images; 
+    let html = '<h3>'+esc(o.title)+'</h3>';
+    if(o.meta) html += '<div class="m">'+esc(o.meta)+'</div>';
+    if(o.price != null) html += '<div class="p">$'+esc(o.price)+' MXN</div>';
+    if(o.link) html += '<a href="'+o.link+'" target="_blank" rel="noopener">'+esc(o.linkText||"Pedir por WhatsApp")+'</a>';
+    document.getElementById("lb-info").innerHTML = html;
+    lbShow(0);
+    lb.classList.add("open");
+  }
+  function closeLightbox(){ lb.classList.remove("open"); }
+  document.getElementById("lb-close").addEventListener("click", closeLightbox);
+  document.getElementById("lb-prev").addEventListener("click", e=>{ e.stopPropagation(); lbShow(lbIndex-1); });
+  document.getElementById("lb-next").addEventListener("click", e=>{ e.stopPropagation(); lbShow(lbIndex+1); });
+  lb.addEventListener("click", e=>{ if(e.target === lb) closeLightbox(); });
+  document.addEventListener("keydown", e=>{
+    if(!lb.classList.contains("open")) return;
+    if(e.key==="Escape") closeLightbox();
+    if(e.key==="ArrowLeft") lbShow(lbIndex-1);
+    if(e.key==="ArrowRight") lbShow(lbIndex+1);
+  });
+  (function(){
+    const st = document.getElementById("lb-stage");
+    let x0 = null;
+    st.addEventListener("touchstart", e=>{ x0 = e.touches[0].clientX; }, {passive:true});
+    st.addEventListener("touchend", e=>{
+      if(x0 === null) return;
+      const dx = e.changedTouches[0].clientX - x0; x0 = null;
+      if(Math.abs(dx) > 40 && lbImages.length > 1) lbShow(lbIndex + (dx < 0 ? 1 : -1));
+    });
+  })();
+
+  // Tocar una camiseta del catálogo abre el visor
+  gridEl.addEventListener("pointerdown", ()=>{ window.__carouselDragged = false; }, true);
+  gridEl.addEventListener("click", e=>{
+    if(window.__carouselDragged){ window.__carouselDragged = false; return; }
+    if(e.target.closest("button, a, .card-edit-actions, .add-card")) return;
+    const card = e.target.closest(".card[data-id]");
+    if(!card) return;
+    const p = PRODUCTS.find(x => x.id === card.dataset.id);
+    if(!p) return;
+    const imgs = getImages(p);
+    if(!imgs.length) return;
+    openLightbox({ images: imgs, title: p.name, meta: p.meta, price: p.price, link: waLink(p) });
+  });
+
+  // ===== Uniformes: lista =====
   function renderUniforms(){
-    uniGrid.innerHTML = UNIFORMS.map(u =>
-      '<div class="uni-item"><img src="'+u.image+'" alt="Uniforme" loading="lazy" data-src="'+u.docId+'">'+
-      (editMode ? '<button class="uni-del" data-del="'+u.docId+'">Eliminar</button>' : '')+'</div>').join("");
+    uniGrid.innerHTML = UNIFORMS.map(u => {
+      const imgs = uniImgs(u);
+      return '<div class="card" data-uid="'+u.docId+'">'+
+        (editMode ? '<div class="card-edit-actions"><button class="icon-btn" data-uedit="'+u.docId+'">Editar</button><button class="icon-btn danger" data-del="'+u.docId+'">Eliminar</button></div>' : '')+
+        '<div class="jersey"><img src="'+imgs[0]+'" alt="'+esc(u.name||"Uniforme")+'" loading="lazy">'+
+        (imgs.length>1 ? '<span class="uni-count">'+imgs.length+' fotos</span>' : '')+'</div>'+
+        ((u.name||u.meta) ? '<div class="card-body">'+(u.name?'<h3>'+esc(u.name)+'</h3>':'')+(u.meta?'<div class="meta" style="white-space:pre-line">'+esc(u.meta)+'</div>':'')+'</div>' : '')+
+      '</div>';
+    }).join("");
     uniEmpty.style.display = UNIFORMS.length ? "none" : "block";
   }
   document.getElementById("uniforms-btn").addEventListener("click", async ()=>{
@@ -2329,26 +2442,72 @@
   });
   document.getElementById("uni-close").addEventListener("click", ()=> uniOverlay.classList.remove("open"));
   closeOverlayOnBackdrop(uniOverlay);
-  document.getElementById("uni-add").addEventListener("click", ()=> document.getElementById("uni-file").click());
-  document.getElementById("uni-file").addEventListener("change", async (e)=>{
-    const files = Array.from(e.target.files || []);
-    e.target.value = "";
-    let ok = 0;
+
+  // ===== Uniformes: formulario =====
+  const ufOverlay = document.getElementById("uniform-form-overlay");
+  const ufPhotos = document.getElementById("uf-photos");
+  const ufName = document.getElementById("uf-name");
+  const ufMeta = document.getElementById("uf-meta");
+  const ufError = document.getElementById("uf-error");
+  let ufImages = [], ufEditingId = null;
+  function renderUfPhotos(){
+    ufPhotos.innerHTML = ufImages.length ? ufImages.map((src,i)=>
+      '<div class="thumb-wrap"><img src="'+src+'"><button type="button" class="thumb-remove" data-i="'+i+'">×</button></div>').join("")
+      : '<span style="font-size:13px;color:var(--muted)">Sin fotos todavía</span>';
+  }
+  function openUniForm(id){
+    ufEditingId = id;
+    const u = id ? UNIFORMS.find(x=>x.docId===id) : null;
+    ufImages = u ? uniImgs(u).slice() : [];
+    ufName.value = u ? (u.name||"") : "";
+    ufMeta.value = u ? (u.meta||"") : "";
+    ufError.textContent = "";
+    document.getElementById("uf-title").textContent = u ? "Editar uniforme" : "Agregar uniforme";
+    renderUfPhotos();
+    ufOverlay.classList.add("open");
+  }
+  document.getElementById("uni-add").addEventListener("click", ()=> openUniForm(null));
+  document.getElementById("uf-cancel").addEventListener("click", ()=> ufOverlay.classList.remove("open"));
+  document.getElementById("uf-addphotos").addEventListener("click", ()=> document.getElementById("uf-file").click());
+  document.getElementById("uf-file").addEventListener("change", async e=>{
+    const files = Array.from(e.target.files || []); e.target.value = "";
     for(const f of files){
-      try{
-        const image = await resizeImage(f);
-        const createdAt = Date.now() + ok;
-        const ref = await db.collection("uniforms").add({ image, createdAt });
-        UNIFORMS.unshift({ docId: ref.id, image, createdAt });
-        ok++;
-      }catch(err){ console.error(err); toast("No se pudo subir una foto"); }
+      if(ufImages.length >= 5){ ufError.textContent = "Máximo 5 fotos por uniforme."; break; }
+      try{ ufImages.push(await resizeImage(f)); }catch(err){ console.error(err); ufError.textContent = "No se pudo leer una foto."; }
     }
-    if(ok){ renderUniforms(); toast(ok + " foto(s) agregada(s)"); }
+    renderUfPhotos();
   });
+  ufPhotos.addEventListener("click", e=>{
+    const b = e.target.closest("[data-i]"); if(!b) return;
+    ufImages.splice(Number(b.dataset.i),1); renderUfPhotos();
+  });
+  document.getElementById("uf-save").addEventListener("click", async ()=>{
+    if(!ufImages.length){ ufError.textContent = "Agrega al menos una foto."; return; }
+    const prev = ufEditingId ? UNIFORMS.find(x=>x.docId===ufEditingId) : null;
+    const data = { image: ufImages[0], images: ufImages, name: ufName.value.trim(), meta: ufMeta.value.trim(), createdAt: prev ? (prev.createdAt||Date.now()) : Date.now() };
+    try{
+      if(ufEditingId){
+        await db.collection("uniforms").doc(ufEditingId).set(data);
+        Object.assign(prev, data);
+      } else {
+        const ref = await db.collection("uniforms").add(data);
+        UNIFORMS.unshift({ docId: ref.id, ...data });
+      }
+      ufOverlay.classList.remove("open");
+      renderUniforms();
+      toast("Uniforme guardado");
+    }catch(err){
+      console.error(err);
+      ufError.textContent = "No se pudo guardar (puede que las fotos pesen mucho). Prueba con menos fotos.";
+    }
+  });
+
   uniGrid.addEventListener("click", async (e)=>{
+    const ed = e.target.closest("[data-uedit]");
+    if(ed){ openUniForm(ed.dataset.uedit); return; }
     const del = e.target.closest("[data-del]");
     if(del){
-      const ok = await confirmDialog("¿Eliminar esta foto?");
+      const ok = await confirmDialog("¿Eliminar este uniforme?");
       if(!ok) return;
       try{
         await db.collection("uniforms").doc(del.dataset.del).delete();
@@ -2357,13 +2516,13 @@
       }catch(err){ toast("No se pudo eliminar"); }
       return;
     }
-    const img = e.target.closest("img");
-    if(img){
-      document.getElementById("uni-big-img").src = img.src;
-      document.getElementById("uni-big").classList.add("open");
+    const card = e.target.closest("[data-uid]");
+    if(card){
+      const u = UNIFORMS.find(x=>x.docId===card.dataset.uid);
+      if(u) openLightbox({ images: uniImgs(u), title: u.name || "Uniforme", meta: u.meta,
+        link: "https://wa.me/"+WHATSAPP_NUMBER+"?text="+encodeURIComponent("Hola Novah, me interesa un uniforme como este"+(u.name?': "'+u.name+'"':"")+". Quiero cotizar."), linkText: "Cotizar uniforme" });
     }
   });
-  document.getElementById("uni-big").addEventListener("click", ()=> document.getElementById("uni-big").classList.remove("open"));
 
   (async function init(){
     await loadPasscode();
