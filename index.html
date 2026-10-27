@@ -963,9 +963,96 @@
   .uni-photos-row .thumb-wrap img{ width:100%; height:100%; object-fit:cover; border-radius:6px; }
   .uni-photos-row .thumb-remove{ position:absolute; top:-6px; right:-6px; width:20px; height:20px; border-radius:50%; border:none; background:#b41e1e; color:#fff; font-size:13px; cursor:pointer; line-height:1; }
   .uni-form-modal input[type=text], .uni-form-modal textarea{ width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:6px; font-size:14px; font-family:inherit; box-sizing:border-box; background:var(--paper); color:var(--ink); }
+
+  /* ---------- LOADER ---------- */
+  #loader{ position:fixed; inset:0; z-index:9000; background:radial-gradient(ellipse at 50% 40%, #2c6f42 0%, #1d5233 55%, #0f2a1a 100%); color:#fffdf8; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:24px; text-align:center; transition:opacity .5s ease, visibility .5s; }
+  #loader.done{ opacity:0; visibility:hidden; pointer-events:none; }
+  #loader .ld-brand{ font-family:'Anton',sans-serif; font-size:34px; letter-spacing:.12em; }
+  #loader .ld-stage{ width:min(86vw,340px); }
+  #loader .ld-stage svg{ width:100%; height:auto; display:block; }
+  #loader .ld-text{ font-size:13px; letter-spacing:.14em; text-transform:uppercase; opacity:.8; }
+  #loader .ld-fact{ max-width:340px; font-size:15px; line-height:1.45; min-height:66px; color:#ffd9a0; transition:opacity .4s; }
+  #loader .ld-fact b{ display:block; font-size:11px; letter-spacing:.16em; color:#ff9a2e; margin-bottom:4px; }
+  /* penal */
+  .pen-ball{ transform-box:fill-box; transform-origin:center; animation:penBall 2.6s cubic-bezier(.3,.6,.4,1) infinite; }
+  .pen-keeper{ transform-box:fill-box; transform-origin:50% 100%; animation:penKeeper 2.6s ease-in-out infinite; }
+  .pen-kicker{ transform-box:fill-box; transform-origin:50% 100%; animation:penKick 2.6s ease-in-out infinite; }
+  .pen-net{ animation:penNet 2.6s ease-out infinite; transform-box:fill-box; transform-origin:center; }
+  @keyframes penBall{ 0%,18%{ transform:translate(0,0) scale(1); } 52%{ transform:translate(78px,-96px) scale(.5) rotate(540deg); } 100%{ transform:translate(78px,-96px) scale(.5) rotate(720deg); } }
+  @keyframes penKeeper{ 0%,25%{ transform:translateX(0) rotate(0); } 55%,100%{ transform:translateX(-38px) rotate(-62deg); } }
+  @keyframes penKick{ 0%,8%{ transform:rotate(0); } 18%{ transform:rotate(14deg); } 30%,100%{ transform:rotate(0); } }
+  @keyframes penNet{ 0%,50%{ transform:scale(1); } 56%{ transform:scale(1.04,1.07); } 70%,100%{ transform:scale(1); } }
+  /* balón girando */
+  .spin-ball{ transform-box:fill-box; transform-origin:center; animation:ballSpin 1.4s linear infinite; }
+  .spin-wrap{ animation:ballBounce 1.4s ease-in-out infinite; transform-box:fill-box; transform-origin:center; }
+  .spin-shadow{ transform-box:fill-box; transform-origin:center; animation:shadowPulse 1.4s ease-in-out infinite; }
+  @keyframes ballSpin{ to{ transform:rotate(360deg); } }
+  @keyframes ballBounce{ 0%,100%{ transform:translateY(34px); } 50%{ transform:translateY(-6px); } }
+  @keyframes shadowPulse{ 0%,100%{ transform:scale(1); opacity:.35; } 50%{ transform:scale(.55); opacity:.15; } }
+
+  /* ---------- HALLOWEEN ---------- */
+  :root{ --pumpkin:#ff7a1a; }
+  .bats-layer{ position:fixed; inset:0; pointer-events:none; z-index:50; overflow:hidden; }
+  .bat{ position:absolute; top:var(--y); left:-60px; width:var(--s); height:auto; color:#1a1024; opacity:.85; animation:batFly var(--d) linear infinite; animation-delay:var(--dl); }
+  .bat svg{ width:100%; display:block; animation:batFlap .35s ease-in-out infinite alternate; transform-origin:center; }
+  @keyframes batFly{ 0%{ transform:translate(0,0); } 25%{ transform:translate(30vw,-30px); } 50%{ transform:translate(60vw,20px); } 75%{ transform:translate(90vw,-25px); } 100%{ transform:translate(115vw,10px); } }
+  @keyframes batFlap{ from{ transform:scaleY(1); } to{ transform:scaleY(.55); } }
+  .web{ position:absolute; width:150px; height:150px; z-index:3; pointer-events:none; opacity:.55; }
+  .web.tl{ top:0; left:0; } .web.tr{ top:0; right:0; transform:scaleX(-1); }
+  .hero-halloween{ position:absolute; inset:0; z-index:2; pointer-events:none; }
+  .hero-pumpkin{ position:absolute; width:74px; height:auto; filter:drop-shadow(0 4px 6px rgba(0,0,0,.4)); }
+  .hero-pumpkin.a{ right:6%; bottom:14px; animation:pkBob 3.4s ease-in-out infinite; }
+  .hero-pumpkin.b{ right:calc(6% + 62px); bottom:6px; width:48px; animation:pkBob 3.4s ease-in-out infinite .8s; }
+  .hero-ghost{ position:absolute; left:4%; bottom:18px; width:46px; opacity:.9; animation:ghostFloat 4s ease-in-out infinite; }
+  @keyframes pkBob{ 0%,100%{ transform:translateY(0) rotate(-2deg); } 50%{ transform:translateY(-6px) rotate(2deg); } }
+  @keyframes ghostFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-14px); } }
+  .halloween-badge{ display:inline-flex; align-items:center; gap:6px; margin:0 0 12px; padding:5px 12px; border-radius:999px; background:rgba(255,122,26,.18); border:1px solid rgba(255,122,26,.65); color:#ffd2a1; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
+  .tab.active{ box-shadow:0 0 0 2px rgba(255,122,26,.55); }
+  .hero h1{ text-shadow:0 0 18px rgba(255,122,26,.35); }
+  footer{ position:relative; }
+  footer::before{ content:"🎃 👻 🦇 🕸️ 🎃 👻 🦇 🕸️ 🎃"; display:block; text-align:center; letter-spacing:.4em; font-size:16px; margin-bottom:8px; opacity:.9; }
+  @media (max-width:640px){ .hero-pumpkin.a{ width:56px; } .hero-pumpkin.b{ width:36px; right:calc(6% + 46px); } .hero-ghost{ width:34px; } .web{ width:100px; height:100px; } }
+  @media (prefers-reduced-motion:reduce){ .bat, .bat svg, .hero-pumpkin, .hero-ghost{ animation:none; } .bat{ display:none; } }
 </style>
 </head>
 <body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="pumpkin" viewBox="0 0 100 90">
+      <rect x="46" y="2" width="9" height="16" rx="3" fill="#3f7a2a" transform="rotate(10 50 10)"/>
+      <ellipse cx="50" cy="52" rx="46" ry="34" fill="#ff7a1a"/>
+      <ellipse cx="30" cy="52" rx="20" ry="33" fill="#ff9a2e" opacity=".55"/>
+      <ellipse cx="70" cy="52" rx="20" ry="33" fill="#e0620c" opacity=".55"/>
+      <path d="M26 44l12 6-12 4zM74 44l-12 6 12 4z" fill="#2a1408"/>
+      <path d="M30 66q20 14 40 0l-6-3-6 5-8-5-8 5-6-5z" fill="#2a1408"/>
+    </symbol>
+    <symbol id="ghost" viewBox="0 0 60 70">
+      <path d="M30 4C16 4 8 14 8 28v38l8-7 7 7 7-7 7 7 7-7 8 7V28C52 14 44 4 30 4z" fill="#f5f1ff"/>
+      <circle cx="22" cy="28" r="4" fill="#1a1024"/><circle cx="38" cy="28" r="4" fill="#1a1024"/>
+      <ellipse cx="30" cy="42" rx="5" ry="6" fill="#1a1024"/>
+    </symbol>
+    <symbol id="web" viewBox="0 0 100 100">
+      <g stroke="#fffdf8" stroke-width="1.2" fill="none" stroke-linecap="round">
+        <path d="M0 0L100 0M0 0L0 100M0 0L90 55M0 0L55 90M0 0L100 28M0 0L28 100"/>
+        <path d="M22 0Q18 18 0 22M45 0Q38 38 0 45M68 0Q58 58 0 68M90 0Q78 78 0 90"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="bats-layer" aria-hidden="true">
+  <div class="bat" style="--y:12vh; --s:34px; --d:19s; --dl:0s;"><svg viewBox="0 0 64 32" fill="currentColor"><path d="M32 8c-2 0-3 2-4 4-3-3-8-5-14-4 3 2 4 5 4 8-4-1-8 0-12 3 5 0 8 2 9 5 3-3 6-3 9-1 1-2 2-4 3-6 1 2 2 4 3 6 3-2 6-2 9 1 1-3 4-5 9-5-4-3-8-4-12-3 0-3 1-6 4-8-6-1-11 1-14 4-1-2-2-4-4-4z"/></svg></div>
+  <div class="bat" style="--y:30vh; --s:26px; --d:26s; --dl:-9s;"><svg viewBox="0 0 64 32" fill="currentColor"><path d="M32 8c-2 0-3 2-4 4-3-3-8-5-14-4 3 2 4 5 4 8-4-1-8 0-12 3 5 0 8 2 9 5 3-3 6-3 9-1 1-2 2-4 3-6 1 2 2 4 3 6 3-2 6-2 9 1 1-3 4-5 9-5-4-3-8-4-12-3 0-3 1-6 4-8-6-1-11 1-14 4-1-2-2-4-4-4z"/></svg></div>
+  <div class="bat" style="--y:62vh; --s:30px; --d:23s; --dl:-15s;"><svg viewBox="0 0 64 32" fill="currentColor"><path d="M32 8c-2 0-3 2-4 4-3-3-8-5-14-4 3 2 4 5 4 8-4-1-8 0-12 3 5 0 8 2 9 5 3-3 6-3 9-1 1-2 2-4 3-6 1 2 2 4 3 6 3-2 6-2 9 1 1-3 4-5 9-5-4-3-8-4-12-3 0-3 1-6 4-8-6-1-11 1-14 4-1-2-2-4-4-4z"/></svg></div>
+</div>
+
+<div id="loader" role="status" aria-live="polite">
+  <div class="ld-brand">NOVAH</div>
+  <div class="ld-stage" id="ld-stage"></div>
+  <div class="ld-text">Cargando camisetas…</div>
+  <div class="ld-fact" id="ld-fact"></div>
+</div>
 
 <div class="hero">
   <svg class="pitch-bg" viewBox="0 0 1200 600" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg">
@@ -1016,7 +1103,15 @@
       <circle class="chalk-o" cx="820" cy="330" r="11"/>
     </g>
   </svg>
+  <svg class="web tl" aria-hidden="true"><use href="#web"/></svg>
+  <svg class="web tr" aria-hidden="true"><use href="#web"/></svg>
+  <div class="hero-halloween" aria-hidden="true">
+    <svg class="hero-ghost"><use href="#ghost"/></svg>
+    <svg class="hero-pumpkin a" viewBox="0 0 100 90"><use href="#pumpkin"/></svg>
+    <svg class="hero-pumpkin b" viewBox="0 0 100 90"><use href="#pumpkin"/></svg>
+  </div>
   <div class="hero-inner">
+    <div class="halloween-badge">🎃 Edición Halloween</div>
     <div class="brand-row">
       <div class="brand" id="brand-trigger">
         <div class="brand-mark"></div>
@@ -2355,6 +2450,7 @@
 
   // Al volver desde el enlace del correo: verificar y abrir "nueva contraseña"
   async function handleResetLink(){
+    if(!/oobCode=/.test(window.location.href)) return;
     try{
       const auth = firebase.auth();
       if(!auth.isSignInWithEmailLink(window.location.href)) return;
@@ -2569,6 +2665,51 @@
     }
   });
 
+
+  // ===== Pantalla de carga =====
+  (function(){
+    const BALL = '<g><circle cx="0" cy="0" r="22" fill="#fffdf8" stroke="#12241c" stroke-width="2"/><path d="M0 -9l8.5 6.2-3.2 10h-10.6l-3.2-10z" fill="#12241c"/><path d="M0 -9V-22M8.5 -2.8L21 -7M5.3 7.2L13 17.5M-5.3 7.2L-13 17.5M-8.5 -2.8L-21 -7" stroke="#12241c" stroke-width="2" fill="none"/></g>';
+    const FACTS = [
+      "En el Mundial de 1958, Just Fontaine marcó 13 goles: sigue siendo el récord de goles de un jugador en un solo Mundial.",
+      "En el Mundial de 2002, Hakan Şükür anotó a los 11 segundos contra Corea del Sur: el gol más rápido en la historia de los Mundiales.",
+      "En el Mundial de 1954, Austria 7-5 Suiza fue el partido con más goles en la historia de los Mundiales: 12, con casi 40 °C de calor.",
+      "En 1966, justo antes del Mundial de Inglaterra, robaron la Copa del Mundo y la encontró una semana después un perro llamado Pickles, envuelta en periódico.",
+      "En 1885, Arbroath le ganó 36-0 al Bon Accord en la Copa de Escocia: la mayor goleada registrada en un partido de fútbol.",
+      "El Sheffield FC, fundado en 1857, es considerado por la FIFA el club independiente más antiguo del mundo que sigue jugando.",
+      "En la temporada 2003-04, el Arsenal ganó la Premier League sin perder un solo partido, y su racha llegó a 49 partidos de liga sin derrota.",
+      "El Real Madrid ganó las primeras cinco Copas de Europa seguidas (1956-1960), y en la final de 1960 le ganó 7-3 al Eintracht Frankfurt.",
+      "En 2012, Lionel Messi marcó 91 goles en un año con Barcelona y Argentina: récord Guinness, superando los 85 de Gerd Müller en 1972."
+    ];
+    const penalty = '<svg viewBox="0 0 300 190"><rect width="300" height="190" fill="none"/>'+
+      '<path d="M0 150H300" stroke="#fffdf8" stroke-opacity=".35" stroke-width="2"/>'+
+      '<g class="pen-net"><rect x="70" y="30" width="160" height="92" fill="rgba(255,255,255,.07)" stroke="#fffdf8" stroke-width="4"/>'+
+      '<path d="M70 52H230M70 74H230M70 96H230M102 30V122M134 30V122M166 30V122M198 30V122" stroke="#fffdf8" stroke-opacity=".3" stroke-width="1"/></g>'+
+      '<g class="pen-keeper"><circle cx="150" cy="70" r="8" fill="#f3c9a0"/><rect x="142" y="78" width="16" height="30" rx="5" fill="#ff7a1a"/><path d="M142 82L128 70M158 82L172 70" stroke="#ff7a1a" stroke-width="6" stroke-linecap="round"/><path d="M146 108L142 122M154 108L158 122" stroke="#1a1024" stroke-width="6" stroke-linecap="round"/></g>'+
+      '<g class="pen-kicker"><circle cx="100" cy="132" r="8" fill="#f3c9a0"/><rect x="92" y="140" width="16" height="28" rx="5" fill="#fffdf8"/><path d="M96 168L90 186M104 168L118 178" stroke="#12241c" stroke-width="6" stroke-linecap="round"/></g>'+
+      '<g class="pen-ball"><g transform="translate(150 170) scale(.45)">'+BALL+'</g></g></svg>';
+    const spinner = '<svg viewBox="0 0 300 150"><ellipse class="spin-shadow" cx="150" cy="132" rx="34" ry="6" fill="#000"/>'+
+      '<g class="spin-wrap"><g transform="translate(150 66)"><g class="spin-ball"><g transform="scale(1.5)">'+BALL+'</g></g></g></g></svg>';
+    const pick = Math.floor(Math.random()*3);
+    const stage = document.getElementById("ld-stage");
+    const factEl = document.getElementById("ld-fact");
+    stage.innerHTML = pick === 0 ? penalty : pick === 1 ? spinner : '<svg viewBox="0 0 300 90"><g transform="translate(150 45)"><g class="spin-ball"><g transform="scale(1.6)">'+BALL+'</g></g></g></svg>';
+    let fi = Math.floor(Math.random()*FACTS.length);
+    function showFact(){
+      factEl.style.opacity = 0;
+      setTimeout(()=>{ factEl.innerHTML = "<b>¿SABÍAS QUE…?</b>"+FACTS[fi]; factEl.style.opacity = 1; fi = (fi+1)%FACTS.length; }, 300);
+    }
+    showFact();
+    window.__factTimer = setInterval(showFact, 4000);
+    window.__loaderStart = Date.now();
+  })();
+  function hideLoader(){
+    const l = document.getElementById("loader");
+    if(!l) return;
+    const wait = Math.max(0, 1600 - (Date.now() - (window.__loaderStart||0)));
+    setTimeout(()=>{ l.classList.add("done"); clearInterval(window.__factTimer); setTimeout(()=>l.remove(), 700); }, wait);
+  }
+  setTimeout(hideLoader, 15000); // por seguridad
+
   (async function init(){
     await loadPasscode();
     await loadProducts();
@@ -2581,6 +2722,7 @@
     renderSubtabs();
     renderGrid();
     startQuoteRotation();
+    hideLoader();
     handleResetLink();
   })();
 </script>
