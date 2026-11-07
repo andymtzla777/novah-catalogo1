@@ -998,72 +998,101 @@
   @keyframes ballBounce{ 0%,100%{ transform:translateY(34px); } 50%{ transform:translateY(-6px); } }
   @keyframes shadowPulse{ 0%,100%{ transform:scale(1); opacity:.35; } 50%{ transform:scale(.55); opacity:.15; } }
 
-  /* ---------- HALLOWEEN ---------- */
-  :root{ --pumpkin:#ff7a1a; }
-  .bats-layer{ position:fixed; inset:0; pointer-events:none; z-index:50; overflow:hidden; }
-  .bat{ position:absolute; top:var(--y); left:-60px; width:var(--s); height:auto; color:#1a1024; opacity:.85; animation:batFly var(--d) linear infinite; animation-delay:var(--dl); }
-  .bat svg{ width:100%; display:block; animation:batFlap .35s ease-in-out infinite alternate; transform-origin:center; }
-  @keyframes batFly{ 0%{ transform:translate(0,0); } 25%{ transform:translate(30vw,-30px); } 50%{ transform:translate(60vw,20px); } 75%{ transform:translate(90vw,-25px); } 100%{ transform:translate(115vw,10px); } }
-  @keyframes batFlap{ from{ transform:scaleY(1); } to{ transform:scaleY(.55); } }
-  .web{ position:absolute; width:150px; height:150px; z-index:3; pointer-events:none; opacity:.55; }
-  .web.tl{ top:0; left:0; } .web.tr{ top:0; right:0; transform:scaleX(-1); }
-  .hero-halloween{ position:absolute; inset:0; z-index:2; pointer-events:none; }
-  .hero-pumpkin{ position:absolute; width:74px; height:auto; filter:drop-shadow(0 4px 6px rgba(0,0,0,.4)); }
-  .hero-pumpkin.a{ right:6%; bottom:14px; animation:pkBob 3.4s ease-in-out infinite; }
-  .hero-pumpkin.b{ right:calc(6% + 62px); bottom:6px; width:48px; animation:pkBob 3.4s ease-in-out infinite .8s; }
-  .hero-ghost{ position:absolute; left:4%; bottom:18px; width:46px; opacity:.9; animation:ghostFloat 4s ease-in-out infinite; }
-  @keyframes pkBob{ 0%,100%{ transform:translateY(0) rotate(-2deg); } 50%{ transform:translateY(-6px) rotate(2deg); } }
-  @keyframes ghostFloat{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-14px); } }
-  .halloween-badge{ display:inline-flex; align-items:center; gap:6px; margin:0 0 12px; padding:5px 12px; border-radius:999px; background:rgba(255,122,26,.18); border:1px solid rgba(255,122,26,.65); color:#ffd2a1; font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; }
-  .tab.active{ box-shadow:0 0 0 2px rgba(255,122,26,.55); }
-  .hero h1{ text-shadow:0 0 18px rgba(255,122,26,.35); }
+  /* ---------- NAVIDAD ---------- */
+  .snow-layer{ position:fixed; inset:0; pointer-events:none; z-index:50; overflow:hidden; }
+  .flake{ position:absolute; top:-20px; left:var(--x); font-size:var(--s); color:#fff; opacity:.9; text-shadow:0 0 6px rgba(255,255,255,.7); animation:snowFall var(--d) linear infinite, snowSway var(--w) ease-in-out infinite alternate; animation-delay:var(--dl), var(--dl); }
+  @keyframes snowFall{ to{ top:105vh; } }
+  @keyframes snowSway{ from{ margin-left:-18px; } to{ margin-left:18px; } }
+  .xmas-lights{ position:absolute; top:0; left:0; right:0; height:46px; z-index:4; pointer-events:none; display:flex; justify-content:space-between; padding:0 6px; }
+  .xmas-lights::before{ content:""; position:absolute; left:-10px; right:-10px; top:-8px; height:22px; border-bottom:2px solid #0b2a17; border-radius:0 0 50% 50% / 0 0 100% 100%; }
+  .bulb{ position:relative; width:11px; height:17px; border-radius:50% 50% 50% 50% / 35% 35% 65% 65%; margin-top:var(--m); background:var(--c); box-shadow:0 0 10px 3px var(--c); animation:bulbGlow 1.6s ease-in-out infinite; animation-delay:var(--dl); }
+  .bulb::before{ content:""; position:absolute; top:-5px; left:2px; width:7px; height:6px; background:#0b2a17; border-radius:2px; }
+  @keyframes bulbGlow{ 0%,100%{ opacity:1; filter:brightness(1.2); } 50%{ opacity:.45; filter:brightness(.7); } }
+  .hero-xmas{ position:absolute; inset:0; z-index:2; pointer-events:none; }
+  .xm{ position:absolute; height:auto; filter:drop-shadow(0 4px 6px rgba(0,0,0,.45)); }
+  .xm.tree{ right:5%; bottom:10px; width:92px; animation:xmBob 4s ease-in-out infinite; }
+  .xm.tree2{ right:calc(5% + 78px); bottom:4px; width:58px; animation:xmBob 4s ease-in-out infinite .9s; }
+  .xm.gift{ right:calc(5% + 128px); bottom:4px; width:44px; }
+  .xm.gift2{ right:calc(5% + 28px); bottom:2px; width:36px; }
+  .xm.snowman{ left:3%; bottom:12px; width:64px; animation:xmBob 3.6s ease-in-out infinite; }
+  @keyframes xmBob{ 0%,100%{ transform:translateY(0) rotate(-1.5deg); } 50%{ transform:translateY(-5px) rotate(1.5deg); } }
+  .xmas-badge{ display:inline-flex; align-items:center; gap:6px; margin:6px 0 12px; padding:5px 14px; border-radius:999px; background:rgba(200,16,46,.85); border:1px solid #ffd23f; color:#fff; font-size:12px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; box-shadow:0 0 14px rgba(255,210,63,.45); }
+  .tab.active{ box-shadow:0 0 0 2px #e63946, 0 0 12px rgba(230,57,70,.55); }
+  .hero h1{ text-shadow:0 0 18px rgba(255,210,63,.4), 2px 2px 0 rgba(200,16,46,.55); }
   footer{ position:relative; }
-  footer::before{ content:"🎃 👻 🦇 🕸️ 🎃 👻 🦇 🕸️ 🎃"; display:block; text-align:center; letter-spacing:.4em; font-size:16px; margin-bottom:8px; opacity:.9; }
-  @media (max-width:640px){ .hero-pumpkin.a{ width:56px; } .hero-pumpkin.b{ width:36px; right:calc(6% + 46px); } .hero-ghost{ width:34px; } .web{ width:100px; height:100px; } }
-  @media (prefers-reduced-motion:reduce){ .bat, .bat svg, .hero-pumpkin, .hero-ghost{ animation:none; } .bat{ display:none; } }
+  footer::before{ content:"🎄 ⛄ 🎁 ❄️ 🎅 ❄️ 🎁 ⛄ 🎄"; display:block; text-align:center; letter-spacing:.4em; font-size:18px; margin-bottom:8px; }
+  .candy{ height:8px; background:repeating-linear-gradient(45deg,#c8102e 0 12px,#fff 12px 24px); }
+  .xm-title-border{ }
+  @media (max-width:640px){ .xm.tree{ width:66px; } .xm.tree2{ width:42px; right:calc(5% + 56px); } .xm.gift{ width:32px; right:calc(5% + 92px); } .xm.gift2{ width:28px; } .xm.snowman{ width:46px; } .bulb{ width:9px; height:14px; } }
+  @media (prefers-reduced-motion:reduce){ .flake, .bulb, .xm{ animation:none; } .snow-layer{ display:none; } }
 
-  .ship-bar{ position:relative; z-index:60; display:flex; align-items:center; justify-content:center; gap:10px; padding:10px 44px 10px 16px; background:linear-gradient(90deg,#ff7a1a,#ffb347,#ff7a1a); background-size:200% 100%; animation:shipShine 6s linear infinite; color:#1a1024; font-weight:800; font-size:15px; text-align:center; line-height:1.3; box-shadow:0 2px 10px rgba(0,0,0,.25); }
+  .ship-bar{ position:relative; z-index:60; display:flex; align-items:center; justify-content:center; gap:10px; padding:10px 44px 10px 16px; background:linear-gradient(90deg,#c8102e,#e63946,#c8102e); background-size:200% 100%; animation:shipShine 6s linear infinite; color:#fff; font-weight:800; font-size:15px; text-align:center; line-height:1.3; box-shadow:0 2px 10px rgba(0,0,0,.25); }
   .ship-bar .ship-ico{ font-size:20px; animation:shipBounce 1.8s ease-in-out infinite; }
-  .ship-bar b{ background:#1a1024; color:#ffd9a0; padding:2px 8px; border-radius:6px; white-space:nowrap; }
-  .ship-bar .ship-free{ background:#fff; color:#0f7a3a; padding:2px 8px; border-radius:6px; white-space:nowrap; }
-  .ship-close{ position:absolute; right:8px; top:50%; transform:translateY(-50%); width:30px; height:30px; border:none; border-radius:50%; background:rgba(26,16,36,.18); color:#1a1024; font-size:18px; cursor:pointer; line-height:1; }
+  .ship-bar b{ background:#fff; color:#c8102e; padding:2px 8px; border-radius:6px; white-space:nowrap; }
+  .ship-bar .ship-free{ background:#ffd23f; color:#14532d; padding:2px 8px; border-radius:6px; white-space:nowrap; }
+  .ship-close{ position:absolute; right:8px; top:50%; transform:translateY(-50%); width:30px; height:30px; border:none; border-radius:50%; background:rgba(0,0,0,.25); color:#fff; font-size:18px; cursor:pointer; line-height:1; }
   @keyframes shipShine{ to{ background-position:200% 0; } }
   @keyframes shipBounce{ 0%,100%{ transform:translateX(0); } 50%{ transform:translateX(5px); } }
   @media (max-width:640px){ .ship-bar{ font-size:13px; padding:9px 40px 9px 12px; } }
   @media (prefers-reduced-motion:reduce){ .ship-bar, .ship-bar .ship-ico{ animation:none; } }
+
+  /* ---------- SANTA Y DUENDES ---------- */
+  .santa-fly{ position:fixed; top:var(--top,16vh); left:0; width:230px; z-index:55; pointer-events:none; animation:santaFly 9s linear forwards; }
+  .santa-fly svg{ width:100%; height:auto; display:block; filter:drop-shadow(0 6px 8px rgba(0,0,0,.35)); animation:santaBob 1.2s ease-in-out infinite; }
+  .santa-fly .hoho{ position:absolute; top:-26px; left:60px; background:#fff; color:#c8102e; font-weight:900; font-size:13px; padding:4px 10px; border-radius:12px; white-space:nowrap; animation:hohoPop 9s linear forwards; }
+  .santa-fly .hoho::after{ content:""; position:absolute; bottom:-6px; left:18px; border:6px solid transparent; border-top-color:#fff; border-bottom:0; }
+  @keyframes santaFly{ from{ transform:translateX(105vw); } to{ transform:translateX(-300px); } }
+  @keyframes santaBob{ 0%,100%{ transform:translateY(0) rotate(-1deg); } 50%{ transform:translateY(-8px) rotate(1deg); } }
+  @keyframes hohoPop{ 0%,25%{ opacity:0; transform:scale(.6); } 32%,70%{ opacity:1; transform:scale(1); } 80%,100%{ opacity:0; transform:scale(.9); } }
+  .elf-scene{ position:fixed; left:8px; bottom:0; width:210px; z-index:55; pointer-events:none; animation:elfScene 11s ease-in-out forwards; }
+  .elf-scene svg{ width:100%; height:auto; display:block; filter:drop-shadow(0 4px 6px rgba(0,0,0,.4)); }
+  @keyframes elfScene{ 0%{ transform:translateY(130%); } 10%,88%{ transform:translateY(0); } 100%{ transform:translateY(130%); } }
+  .hammer{ transform-box:fill-box; transform-origin:90% 90%; animation:hammerHit .5s ease-in-out infinite; }
+  .hammer.b{ animation-delay:.25s; }
+  @keyframes hammerHit{ 0%,100%{ transform:rotate(-35deg); } 50%{ transform:rotate(18deg); } }
+  .toy-p1,.toy-p2,.toy-p3,.toy-p4{ opacity:0; animation-duration:11s; animation-fill-mode:forwards; animation-timing-function:steps(1,end); }
+  .toy-p1{ animation-name:toyP1; } .toy-p2{ animation-name:toyP2; } .toy-p3{ animation-name:toyP3; } .toy-p4{ animation-name:toyP4; }
+  @keyframes toyP1{ 0%,22%{opacity:0;} 23%,100%{opacity:1;} }
+  @keyframes toyP2{ 0%,38%{opacity:0;} 39%,100%{opacity:1;} }
+  @keyframes toyP3{ 0%,54%{opacity:0;} 55%,100%{opacity:1;} }
+  @keyframes toyP4{ 0%,68%{opacity:0;} 69%,100%{opacity:1;} }
+  .toy-done{ transform-box:fill-box; transform-origin:center; opacity:0; animation:toyDone 11s linear forwards; }
+  @keyframes toyDone{ 0%,69%{ opacity:0; transform:scale(.3); } 74%{ opacity:1; transform:scale(1.4); } 82%,100%{ opacity:0; transform:scale(1.8); } }
+  .elf-say{ position:absolute; top:2px; right:6px; background:#fff; color:#14532d; font-weight:800; font-size:12px; padding:3px 9px; border-radius:10px; opacity:0; animation:elfSay 11s linear forwards; }
+  @keyframes elfSay{ 0%,70%{ opacity:0; } 74%,86%{ opacity:1; } 92%,100%{ opacity:0; } }
+  @media (max-width:640px){ .santa-fly{ width:170px; } .elf-scene{ width:160px; bottom:60px; } }
+  @media (prefers-reduced-motion:reduce){ .santa-fly, .elf-scene{ display:none; } }
 </style>
 </head>
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <symbol id="pumpkin" viewBox="0 0 100 90">
-      <rect x="46" y="2" width="9" height="16" rx="3" fill="#3f7a2a" transform="rotate(10 50 10)"/>
-      <ellipse cx="50" cy="52" rx="46" ry="34" fill="#ff7a1a"/>
-      <ellipse cx="30" cy="52" rx="20" ry="33" fill="#ff9a2e" opacity=".55"/>
-      <ellipse cx="70" cy="52" rx="20" ry="33" fill="#e0620c" opacity=".55"/>
-      <path d="M26 44l12 6-12 4zM74 44l-12 6 12 4z" fill="#2a1408"/>
-      <path d="M30 66q20 14 40 0l-6-3-6 5-8-5-8 5-6-5z" fill="#2a1408"/>
+    <symbol id="tree" viewBox="0 0 100 130">
+      <rect x="43" y="106" width="14" height="22" fill="#6b3f1d"/>
+      <path d="M50 4L82 46H66L90 80H72L98 112H2L28 80H10L34 46H18z" fill="#1f8a43"/>
+      <path d="M50 4L66 46H50L72 80H50L84 112H50z" fill="#16722f" opacity=".6"/>
+      <path d="M50 -2l4 9 10 1-7 7 2 10-9-5-9 5 2-10-7-7 10-1z" fill="#ffd23f" transform="translate(0 6)"/>
+      <circle cx="40" cy="52" r="4" fill="#e63946"/><circle cx="60" cy="72" r="4" fill="#ffd23f"/><circle cx="38" cy="88" r="4" fill="#4aa3ff"/><circle cx="66" cy="98" r="4" fill="#e63946"/><circle cx="28" cy="104" r="3.5" fill="#ffd23f"/>
     </symbol>
-    <symbol id="ghost" viewBox="0 0 60 70">
-      <path d="M30 4C16 4 8 14 8 28v38l8-7 7 7 7-7 7 7 7-7 8 7V28C52 14 44 4 30 4z" fill="#f5f1ff"/>
-      <circle cx="22" cy="28" r="4" fill="#1a1024"/><circle cx="38" cy="28" r="4" fill="#1a1024"/>
-      <ellipse cx="30" cy="42" rx="5" ry="6" fill="#1a1024"/>
+    <symbol id="gift" viewBox="0 0 60 60">
+      <rect x="4" y="22" width="52" height="34" rx="3" fill="#c8102e"/>
+      <rect x="2" y="14" width="56" height="12" rx="3" fill="#e63946"/>
+      <rect x="26" y="14" width="8" height="42" fill="#ffd23f"/>
+      <path d="M30 14C20 2 8 8 16 14zM30 14C40 2 52 8 44 14z" fill="#ffd23f"/>
     </symbol>
-    <symbol id="web" viewBox="0 0 100 100">
-      <g stroke="#fffdf8" stroke-width="1.2" fill="none" stroke-linecap="round">
-        <path d="M0 0L100 0M0 0L0 100M0 0L90 55M0 0L55 90M0 0L100 28M0 0L28 100"/>
-        <path d="M22 0Q18 18 0 22M45 0Q38 38 0 45M68 0Q58 58 0 68M90 0Q78 78 0 90"/>
-      </g>
+    <symbol id="snowman" viewBox="0 0 70 110">
+      <circle cx="35" cy="80" r="27" fill="#fff"/><circle cx="35" cy="40" r="20" fill="#fff"/>
+      <rect x="20" y="10" width="30" height="5" fill="#1a1024"/><rect x="25" y="-4" width="20" height="16" fill="#1a1024"/><rect x="25" y="6" width="20" height="4" fill="#c8102e"/>
+      <circle cx="28" cy="36" r="2.5" fill="#1a1024"/><circle cx="42" cy="36" r="2.5" fill="#1a1024"/>
+      <path d="M35 42l16 4-16 3z" fill="#ff7a1a"/>
+      <path d="M17 56q18 10 36 0l2 8q-20 10-40 0z" fill="#c8102e"/>
+      <circle cx="35" cy="76" r="2.5" fill="#1a1024"/><circle cx="35" cy="88" r="2.5" fill="#1a1024"/>
     </symbol>
   </defs>
 </svg>
 
-<div class="bats-layer" aria-hidden="true">
-  <div class="bat" style="--y:12vh; --s:34px; --d:19s; --dl:0s;"><svg viewBox="0 0 64 32" fill="currentColor"><path d="M32 8c-2 0-3 2-4 4-3-3-8-5-14-4 3 2 4 5 4 8-4-1-8 0-12 3 5 0 8 2 9 5 3-3 6-3 9-1 1-2 2-4 3-6 1 2 2 4 3 6 3-2 6-2 9 1 1-3 4-5 9-5-4-3-8-4-12-3 0-3 1-6 4-8-6-1-11 1-14 4-1-2-2-4-4-4z"/></svg></div>
-  <div class="bat" style="--y:30vh; --s:26px; --d:26s; --dl:-9s;"><svg viewBox="0 0 64 32" fill="currentColor"><path d="M32 8c-2 0-3 2-4 4-3-3-8-5-14-4 3 2 4 5 4 8-4-1-8 0-12 3 5 0 8 2 9 5 3-3 6-3 9-1 1-2 2-4 3-6 1 2 2 4 3 6 3-2 6-2 9 1 1-3 4-5 9-5-4-3-8-4-12-3 0-3 1-6 4-8-6-1-11 1-14 4-1-2-2-4-4-4z"/></svg></div>
-  <div class="bat" style="--y:62vh; --s:30px; --d:23s; --dl:-15s;"><svg viewBox="0 0 64 32" fill="currentColor"><path d="M32 8c-2 0-3 2-4 4-3-3-8-5-14-4 3 2 4 5 4 8-4-1-8 0-12 3 5 0 8 2 9 5 3-3 6-3 9-1 1-2 2-4 3-6 1 2 2 4 3 6 3-2 6-2 9 1 1-3 4-5 9-5-4-3-8-4-12-3 0-3 1-6 4-8-6-1-11 1-14 4-1-2-2-4-4-4z"/></svg></div>
-</div>
+<div class="snow-layer" id="snow-layer" aria-hidden="true"></div>
 
 <div id="loader" role="status" aria-live="polite">
   <div class="ld-brand">NOVAH</div>
@@ -1078,6 +1107,7 @@
   <button class="ship-close" id="ship-close" aria-label="Cerrar anuncio">×</button>
 </div>
 
+<div class="candy" aria-hidden="true"></div>
 <div class="hero">
   <svg class="pitch-bg" viewBox="0 0 1200 600" preserveAspectRatio="xMaxYMid slice" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -1127,15 +1157,16 @@
       <circle class="chalk-o" cx="820" cy="330" r="11"/>
     </g>
   </svg>
-  <svg class="web tl" aria-hidden="true"><use href="#web"/></svg>
-  <svg class="web tr" aria-hidden="true"><use href="#web"/></svg>
-  <div class="hero-halloween" aria-hidden="true">
-    <svg class="hero-ghost"><use href="#ghost"/></svg>
-    <svg class="hero-pumpkin a" viewBox="0 0 100 90"><use href="#pumpkin"/></svg>
-    <svg class="hero-pumpkin b" viewBox="0 0 100 90"><use href="#pumpkin"/></svg>
+  <div class="xmas-lights" id="xmas-lights" aria-hidden="true"></div>
+  <div class="hero-xmas" aria-hidden="true">
+    <svg class="xm snowman" viewBox="0 0 70 110"><use href="#snowman"/></svg>
+    <svg class="xm gift" viewBox="0 0 60 60"><use href="#gift"/></svg>
+    <svg class="xm tree2" viewBox="0 0 100 130"><use href="#tree"/></svg>
+    <svg class="xm tree" viewBox="0 0 100 130"><use href="#tree"/></svg>
+    <svg class="xm gift2" viewBox="0 0 60 60"><use href="#gift"/></svg>
   </div>
   <div class="hero-inner">
-    <div class="halloween-badge">🎃 Edición Halloween</div>
+    <div class="xmas-badge">🎅 Edición Navideña · ¡Felices fiestas!</div>
     <div class="brand-row">
       <div class="brand" id="brand-trigger">
         <div class="brand-mark"></div>
@@ -2689,6 +2720,61 @@
     }
   });
 
+
+  // ===== Navidad: nieve y luces =====
+  (function(){
+    const sl = document.getElementById("snow-layer");
+    const glyphs = ["❄","❅","❆","•"];
+    let h = "";
+    for(let i=0;i<38;i++){
+      const g = glyphs[i%glyphs.length];
+      h += '<span class="flake" style="--x:'+(Math.random()*100).toFixed(1)+'%;--s:'+(10+Math.random()*16).toFixed(0)+'px;--d:'+(9+Math.random()*10).toFixed(1)+'s;--w:'+(2+Math.random()*3).toFixed(1)+'s;--dl:-'+(Math.random()*14).toFixed(1)+'s">'+g+'</span>';
+    }
+    sl.innerHTML = h;
+    const lights = document.getElementById("xmas-lights");
+    const colors = ["#ff3b3b","#ffd23f","#3bd16f","#4aa3ff","#ff7ad9"];
+    const n = Math.max(12, Math.round(window.innerWidth/34));
+    let b = "";
+    for(let i=0;i<n;i++){
+      const m = 8 + Math.round(Math.sin(i/n*Math.PI)*14);
+      b += '<span class="bulb" style="--c:'+colors[i%colors.length]+';--m:'+m+'px;--dl:-'+(i%5*0.3).toFixed(1)+'s"></span>';
+    }
+    lights.innerHTML = b;
+  })();
+
+
+  // ===== Santa Claus y duendes (aparecen de vez en cuando) =====
+  (function(){
+    if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const SANTA = '<svg viewBox="0 0 260 96" xmlns="http://www.w3.org/2000/svg">\n  <g stroke="#7a4a1d" stroke-width="2" fill="none"><path d="M70 50C100 46 120 52 140 56"/><path d="M22 54C60 56 90 54 140 58"/></g>\n  <!-- reno -->\n  <g><ellipse cx="46" cy="52" rx="20" ry="11" fill="#9a5b25"/>\n   <circle cx="22" cy="40" r="9" fill="#9a5b25"/><circle cx="14" cy="42" r="3.5" fill="#e63946"/>\n   <path d="M20 32l-4-12m4 12l6-10m-6 10l-12-6" stroke="#6b3f1d" stroke-width="2.5" fill="none" stroke-linecap="round"/>\n   <path d="M34 60l-4 16M42 62l-2 15M56 62l2 15M64 60l5 14" stroke="#6b3f1d" stroke-width="4" stroke-linecap="round"/></g>\n  <!-- trineo -->\n  <path d="M130 56h96q-6 20-26 22H146q-18 0-16-22z" fill="#c8102e"/>\n  <path d="M122 86q40 8 110 0" stroke="#ffd23f" stroke-width="4" fill="none" stroke-linecap="round"/>\n  <path d="M122 86q-8 0-6-8" stroke="#ffd23f" stroke-width="4" fill="none" stroke-linecap="round"/>\n  <!-- santa -->\n  <circle cx="190" cy="34" r="11" fill="#f6c9a0"/>\n  <path d="M178 34q12 22 24 0q-2 16-12 18q-10-2-12-18z" fill="#fff"/>\n  <path d="M178 30q12-24 26-6l-4 6q-10-6-22 0z" fill="#c8102e"/>\n  <circle cx="205" cy="22" r="4.5" fill="#fff"/>\n  <rect x="176" y="46" width="28" height="14" rx="6" fill="#c8102e"/>\n  <rect x="140" y="30" width="30" height="28" rx="10" fill="#9a5b25"/><path d="M150 30q5-8 10 0" stroke="#6b3f1d" stroke-width="3" fill="none"/>\n  <circle cx="186" cy="32" r="1.8" fill="#1a1024"/><circle cx="194" cy="32" r="1.8" fill="#1a1024"/>\n</svg>';
+    const ELVES = '<svg viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg">\n  <!-- mesa -->\n  <rect x="62" y="92" width="96" height="10" rx="3" fill="#8a5a2b"/>\n  <rect x="70" y="102" width="8" height="26" fill="#6b3f1d"/><rect x="142" y="102" width="8" height="26" fill="#6b3f1d"/>\n  <!-- juguete: robot que se arma por partes -->\n  <g>\n    <rect class="toy-p1" x="97" y="68" width="26" height="24" rx="3" fill="#4aa3ff"/>\n    <rect class="toy-p2" x="100" y="52" width="20" height="16" rx="3" fill="#ffd23f"/>\n    <g class="toy-p3"><rect x="88" y="70" width="8" height="18" rx="3" fill="#e63946"/><rect x="124" y="70" width="8" height="18" rx="3" fill="#e63946"/></g>\n    <g class="toy-p4"><circle cx="106" cy="59" r="2" fill="#1a1024"/><circle cx="114" cy="59" r="2" fill="#1a1024"/><path d="M110 52V44" stroke="#c8102e" stroke-width="2"/><circle cx="110" cy="42" r="3" fill="#c8102e"/></g>\n    <text class="toy-done" x="110" y="40" text-anchor="middle" font-size="22">✨</text>\n  </g>\n  <!-- duende izquierdo -->\n  <g>\n    <path d="M12 52L30 14L48 52z" fill="#14a050"/><rect x="12" y="49" width="36" height="7" rx="3" fill="#c8102e"/><circle cx="30" cy="12" r="4" fill="#fff"/>\n    <circle cx="30" cy="66" r="14" fill="#f6c9a0"/><circle cx="25" cy="64" r="2" fill="#1a1024"/><circle cx="35" cy="64" r="2" fill="#1a1024"/><path d="M25 71q5 4 10 0" stroke="#c8102e" stroke-width="2" fill="none"/>\n    <path d="M14 66l-6-4M46 66l6-4" stroke="#f6c9a0" stroke-width="0"/>\n    <rect x="16" y="80" width="28" height="30" rx="8" fill="#14a050"/><rect x="16" y="94" width="28" height="5" fill="#c8102e"/>\n    <path d="M22 110v14M38 110v14" stroke="#c8102e" stroke-width="6" stroke-linecap="round"/>\n    <g class="hammer"><rect x="44" y="64" width="26" height="5" rx="2" fill="#8a5a2b"/><rect x="64" y="58" width="12" height="16" rx="2" fill="#777"/></g>\n  </g>\n  <!-- duende derecho -->\n  <g>\n    <path d="M170 52L188 14L206 52z" fill="#c8102e"/><rect x="170" y="49" width="36" height="7" rx="3" fill="#14a050"/><circle cx="188" cy="12" r="4" fill="#fff"/>\n    <circle cx="188" cy="66" r="14" fill="#f6c9a0"/><circle cx="183" cy="64" r="2" fill="#1a1024"/><circle cx="193" cy="64" r="2" fill="#1a1024"/><path d="M183 71q5 4 10 0" stroke="#c8102e" stroke-width="2" fill="none"/>\n    <rect x="174" y="80" width="28" height="30" rx="8" fill="#c8102e"/><rect x="174" y="94" width="28" height="5" fill="#14a050"/>\n    <path d="M180 110v14M196 110v14" stroke="#14a050" stroke-width="6" stroke-linecap="round"/>\n    <g class="hammer b" transform="translate(220 0) scale(-1 1)"><rect x="44" y="64" width="26" height="5" rx="2" fill="#8a5a2b"/><rect x="64" y="58" width="12" height="16" rx="2" fill="#777"/></g>\n  </g>\n</svg>';
+    let busy = false, count = 0;
+    function rnd(a,b){ return a + Math.random()*(b-a); }
+    function santa(){
+      if(busy || document.hidden) return schedule();
+      busy = true;
+      const el = document.createElement("div");
+      el.className = "santa-fly";
+      el.style.setProperty("--top", rnd(14,45).toFixed(0)+"vh");
+      el.innerHTML = '<div class="hoho">¡Jo, jo, jo! 🎅</div>' + SANTA;
+      document.body.appendChild(el);
+      setTimeout(()=>{ el.remove(); busy = false; schedule(); }, 9200);
+    }
+    function elves(){
+      if(busy || document.hidden) return schedule();
+      busy = true;
+      const el = document.createElement("div");
+      el.className = "elf-scene";
+      el.innerHTML = ELVES;
+      document.body.appendChild(el);
+      setTimeout(()=>{ el.remove(); busy = false; schedule(); }, 11200);
+    }
+    function schedule(){
+      const next = (count++ === 0) ? elves : (Math.random() < .5 ? santa : elves);
+      setTimeout(next, count === 1 ? rnd(8000, 14000) : rnd(25000, 55000));
+    }
+    setTimeout(santa, 12000);   // primera aparición: Santa; después se alternan al azar
+  })();
 
   document.getElementById("ship-close").addEventListener("click", ()=> document.getElementById("ship-bar").remove());
 
