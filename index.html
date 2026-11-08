@@ -1062,6 +1062,11 @@
   @keyframes elfSay{ 0%,70%{ opacity:0; } 74%,86%{ opacity:1; } 92%,100%{ opacity:0; } }
   @media (max-width:640px){ .santa-fly{ width:170px; } .elf-scene{ width:160px; bottom:60px; } }
   @media (prefers-reduced-motion:reduce){ .santa-fly, .elf-scene{ display:none; } }
+
+  .ship-bar{ padding:10px 16px !important; min-height:64px; box-sizing:border-box; }
+  .ship-msg{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:10px; padding:8px 16px; opacity:0; transition:opacity .6s ease; }
+  .ship-msg.show{ opacity:1; }
+  @media (max-width:640px){ .ship-bar{ min-height:58px; } .ship-msg{ padding:6px 12px; } }
 </style>
 </head>
 <body>
@@ -1102,9 +1107,8 @@
 </div>
 
 <div class="ship-bar" id="ship-bar" role="note">
-  <span class="ship-ico">🚚</span>
-  <span>Envío de 1 a 9 piezas <b>$80 pesos</b>, de 10 en adelante es <span class="ship-free">GRATIS</span></span>
-  <button class="ship-close" id="ship-close" aria-label="Cerrar anuncio">×</button>
+  <div class="ship-msg show"><span class="ship-ico">🚚</span><span>Envío de 1 a 9 piezas <b>$80 pesos</b>, de 10 en adelante es <span class="ship-free">GRATIS</span></span></div>
+  <div class="ship-msg"><span class="ship-ico">📦</span><span>El envío puede tardar aproximadamente de <b>2 a 3 semanas</b></span></div>
 </div>
 
 <div class="candy" aria-hidden="true"></div>
@@ -2776,7 +2780,15 @@
     setTimeout(santa, 12000);   // primera aparición: Santa; después se alternan al azar
   })();
 
-  document.getElementById("ship-close").addEventListener("click", ()=> document.getElementById("ship-bar").remove());
+  (function(){
+    const msgs = document.querySelectorAll("#ship-bar .ship-msg");
+    let i = 0;
+    setInterval(()=>{
+      msgs[i].classList.remove("show");
+      i = (i+1) % msgs.length;
+      msgs[i].classList.add("show");
+    }, 5000);
+  })();
 
   // ===== Pantalla de carga =====
   (function(){
