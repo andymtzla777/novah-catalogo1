@@ -1234,6 +1234,11 @@
     <span class="quote-author" id="quote-author"></span>
   </div>
   <div class="grid" id="grid"></div>
+  <div class="empty" id="load-error" style="display:none;">
+    <p style="margin:0 0 10px;">No pudimos cargar las camisetas. Revisa tu conexión a internet e inténtalo de nuevo.</p>
+    <button type="button" class="ask-btn" id="load-retry" style="background:#c8102e;">Reintentar</button>
+    <p style="margin:12px 0 0;font-size:13px;">¿Sigue sin cargar? <a href="https://wa.me/5586760070?text=Hola%20Novah%2C%20no%20me%20cargan%20las%20camisetas%20en%20el%20cat%C3%A1logo." target="_blank" rel="noopener">Escríbenos por WhatsApp</a></p>
+  </div>
   <div class="empty" id="empty" style="display:none;">No hay camisetas en esta categoría todavía.</div>
   <div class="ask-block">
     <p>Si no encuentras la camiseta que buscas pregunta por existencia</p>
@@ -1478,6 +1483,8 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
+  // Mejor compatibilidad en celulares / redes que bloquean la conexión normal de Firestore
+  try{ db.settings({ experimentalAutoDetectLongPolling: true, useFetchStreams: false, merge: true }); }catch(e){ console.warn(e); }
 </script>
 <script>
   const WHATSAPP_NUMBER = "5586760070";
@@ -1691,20 +1698,57 @@
     }
   }
 
+  // ----- Caché local (IndexedDB): carga instantánea en visitas repetidas y respaldo sin internet -----
+  const IDB_NAME="novah-cache", IDB_STORE="kv";
+  function idbOpen(){
+    return new Promise((res,rej)=>{
+      try{
+        const r=indexedDB.open(IDB_NAME,1);
+        r.onupgradeneeded=()=>r.result.createObjectStore(IDB_STORE);
+        r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);
+      }catch(e){ rej(e); }
+    });
+  }
+  async function cacheGet(key){
+    try{ const db0=await idbOpen(); return await new Promise((res)=>{ const q=db0.transaction(IDB_STORE).objectStore(IDB_STORE).get(key); q.onsuccess=()=>res(q.result||null); q.onerror=()=>res(null); }); }catch(e){ return null; }
+  }
+  async function cacheSet(key,val){
+    try{ const db0=await idbOpen(); await new Promise((res)=>{ const tx=db0.transaction(IDB_STORE,"readwrite"); tx.objectStore(IDB_STORE).put(val,key); tx.oncomplete=()=>res(); tx.onerror=()=>res(); }); }catch(e){}
+  }
+  let LOAD_FAILED = false;
+  const withTimeout = (pr, ms) => Promise.race([pr, new Promise((_,rej)=>setTimeout(()=>rej(new Error("timeout")), ms))]);
+
+  async function fetchProductsFromServer(){
+    let lastErr;
+    for(let i=0;i<2;i++){
+      try{
+        const snap = await withTimeout(db.collection("products").get({source:"server"}), 10000 + i*6000);
+        return snap;
+      }catch(e){ lastErr = e; console.warn("Intento "+(i+1)+" falló", e); await new Promise(r=>setTimeout(r,800)); }
+    }
+    throw lastErr;
+  }
+
   async function loadProducts(){
+    // 1) Si hay caché de una visita anterior, se muestra de inmediato mientras se actualiza
+    const cached = await cacheGet("products");
+    if(cached && cached.length){ PRODUCTS = cached; PRODUCTS_FROM_CACHE = true; }
     try{
-      const snap = await db.collection("products").get();
+      const snap = await fetchProductsFromServer();
       if(!snap.empty){
         PRODUCTS = snap.docs.map(d => d.data());
+        cacheSet("products", PRODUCTS);
       } else {
         PRODUCTS = DEFAULT_PRODUCTS;
         await seedProducts();
       }
+      PRODUCTS_FROM_CACHE = false; LOAD_FAILED = false;
     } catch(e){
       console.error("No se pudieron cargar los productos", e);
-      PRODUCTS = DEFAULT_PRODUCTS;
+      if(!(cached && cached.length)){ PRODUCTS = []; LOAD_FAILED = true; }
     }
   }
+  let PRODUCTS_FROM_CACHE = false;
 
   async function seedProducts(){
     try{
@@ -2100,7 +2144,10 @@
     }
 
     gridEl.innerHTML = html;
-    emptyEl.style.display = (items.length === 0 && !editMode) ? "block" : "none";
+    const loadErr = document.getElementById("load-error");
+    const showErr = LOAD_FAILED && PRODUCTS.length === 0;
+    if(loadErr) loadErr.style.display = showErr ? "block" : "none";
+    emptyEl.style.display = (items.length === 0 && !editMode && !showErr) ? "block" : "none";
 
     gridEl.querySelectorAll('[data-action="edit"]').forEach(btn=>{
       btn.addEventListener("click", ()=> openModal(btn.dataset.id));
@@ -2391,7 +2438,8 @@
     passOverlay.classList.remove("open");
   });
 
-  function submitPasscode(){
+  async function submitPasscode(){
+    try{ await withTimeout(PASSCODE_READY, 8000); }catch(e){}
     if(passInput.value === EDIT_PASSCODE){
       passOverlay.classList.remove("open");
       secqInput.value = "";
@@ -2834,20 +2882,34 @@
   }
   setTimeout(hideLoader, 15000); // por seguridad
 
-  (async function init(){
-    await loadPasscode();
+  document.getElementById("load-retry").addEventListener("click", async ()=>{
+    const b = document.getElementById("load-retry"); b.textContent = "Cargando…"; b.disabled = true;
     await loadProducts();
-    await loadEmail();
-    await loadWishlist();
-    if(WISHLIST.some(i => String(i).startsWith("u:"))) loadUniforms();
+    b.textContent = "Reintentar"; b.disabled = false;
     document.getElementById("stat-total").textContent = PRODUCTS.length;
-    updateWishlistCount();
+    renderGrid();
+  });
+
+  let PASSCODE_READY = Promise.resolve();
+  (async function init(){
+    // Primero lo más importante: las camisetas. Lo demás carga en segundo plano.
+    PASSCODE_READY = withTimeout(loadPasscode(), 15000).catch(()=>{});
+    await loadProducts();
+    document.getElementById("stat-total").textContent = PRODUCTS.length;
     renderTabs();
     renderSubtabs();
     renderGrid();
     startQuoteRotation();
     hideLoader();
     handleResetLink();
+    // Datos del cliente (correo y guardados) sin bloquear la vista
+    try{
+      await loadEmail();
+      await withTimeout(loadWishlist(), 12000);
+    }catch(e){ console.warn(e); }
+    if(WISHLIST.some(i => String(i).startsWith("u:"))) loadUniforms();
+    updateWishlistCount();
+    renderGrid();
   })();
 </script>
 
