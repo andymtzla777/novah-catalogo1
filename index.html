@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+<script>
+  // Modo ligero en teléfonos: menos adornos para que el catálogo no se trabe
+  try{
+    var ua = navigator.userAgent || "";
+    if(/Android|iPhone|iPad|iPod|Mobile|Windows Phone/i.test(ua) || (window.matchMedia && window.matchMedia("(max-width: 820px)").matches)){
+      document.documentElement.classList.add("phone");
+    }
+  }catch(e){}
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Google tag (gtag.js) -->
@@ -1067,6 +1076,24 @@
   .ship-msg{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:10px; padding:8px 16px; opacity:0; transition:opacity .6s ease; }
   .ship-msg.show{ opacity:1; }
   @media (max-width:640px){ .ship-bar{ min-height:58px; } .ship-msg{ padding:6px 12px; } }
+
+  /* ---------- MODO LIGERO (teléfonos) ---------- */
+  .phone .snow-layer{ display:none !important; }
+  .phone .bulb{ animation:none !important; box-shadow:none !important; filter:none !important; }
+  .phone .xm{ animation:none !important; filter:none !important; }
+  .phone .xm.tree2, .phone .xm.gift, .phone .xm.gift2{ display:none !important; }
+  .phone .ship-bar{ animation:none !important; background:#c8102e !important; box-shadow:none !important; }
+  .phone .ship-bar .ship-ico{ animation:none !important; }
+  .phone .ship-msg{ transition:none !important; }
+  .phone .xmas-badge, .phone .tab.active, .phone .hero h1{ box-shadow:none !important; text-shadow:none !important; }
+  .phone .tab.active{ box-shadow:0 0 0 2px #e63946 !important; }
+  .phone .santa-fly, .phone .elf-scene{ display:none !important; }
+  .phone .card, .phone .jersey{ will-change:auto; }
+  .ld-wait{ max-width:320px; font-size:13px; line-height:1.45; color:#fffdf8; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); padding:8px 14px; border-radius:12px; }
+  .new-weekly{ display:flex; align-items:center; justify-content:center; gap:10px; margin:12px auto 4px; max-width:880px; padding:10px 14px; border-radius:12px; background:linear-gradient(90deg,#fff7df,#ffe9b0); border:1.5px solid #dcae4a; color:#3a2a06; font-weight:800; font-size:15px; text-align:center; line-height:1.3; }
+  .new-weekly .nw-ico{ font-size:22px; }
+  .new-weekly b{ background:#c8102e; color:#fff; padding:2px 8px; border-radius:6px; white-space:nowrap; }
+  @media (max-width:640px){ .new-weekly{ font-size:13.5px; margin:10px 12px 2px; } }
 </style>
 </head>
 <body>
@@ -1103,6 +1130,7 @@
   <div class="ld-brand">NOVAH</div>
   <div class="ld-stage" id="ld-stage"></div>
   <div class="ld-text">Cargando camisetas…</div>
+  <div class="ld-wait">📱 En celulares las camisetas pueden tardar un poco más en cargar. ¡Gracias por tu paciencia! 🙏</div>
   <div class="ld-fact" id="ld-fact"></div>
 </div>
 
@@ -1211,6 +1239,7 @@
       <input type="text" id="search-input" placeholder="Buscar equipo o camiseta...">
       <button class="search-clear" id="search-clear" aria-label="Limpiar búsqueda">×</button>
     </div>
+    <div class="new-weekly"><span class="nw-ico">🔥</span><span>¡Subimos <b>jerseys nuevos cada semana</b>! Vuelve a visitarnos</span></div>
     <div class="tabs-row">
       <div class="tabs" id="tabs"></div>
       <div style="display:flex; gap:8px;">
@@ -2093,7 +2122,7 @@
       const jerseyInner = imgs.length ? `
         <div class="jersey-carousel">
           <div class="jersey-track">
-            ${imgs.map(src => `<div class="jersey-slide"><img src="${src}" alt="${p.name}" draggable="false"></div>`).join('')}
+            ${imgs.map(src => `<div class="jersey-slide"><img src="${src}" alt="${p.name}" draggable="false" decoding="async" loading="lazy"></div>`).join('')}
           </div>
           ${imgs.length > 1 ? `<div class="jersey-dots">${imgs.map((_,i)=>`<span class="dot ${i===0?'active':''}"></span>`).join('')}</div>` : ''}
         </div>
@@ -2776,16 +2805,17 @@
   // ===== Navidad: nieve y luces =====
   (function(){
     const sl = document.getElementById("snow-layer");
+    const PH = document.documentElement.classList.contains("phone");
     const glyphs = ["❄","❅","❆","•"];
     let h = "";
-    for(let i=0;i<38;i++){
+    for(let i=0;i<(PH?0:38);i++){
       const g = glyphs[i%glyphs.length];
       h += '<span class="flake" style="--x:'+(Math.random()*100).toFixed(1)+'%;--s:'+(10+Math.random()*16).toFixed(0)+'px;--d:'+(9+Math.random()*10).toFixed(1)+'s;--w:'+(2+Math.random()*3).toFixed(1)+'s;--dl:-'+(Math.random()*14).toFixed(1)+'s">'+g+'</span>';
     }
     sl.innerHTML = h;
     const lights = document.getElementById("xmas-lights");
     const colors = ["#ff3b3b","#ffd23f","#3bd16f","#4aa3ff","#ff7ad9"];
-    const n = Math.max(12, Math.round(window.innerWidth/34));
+    const n = document.documentElement.classList.contains("phone") ? 9 : Math.max(12, Math.round(window.innerWidth/34));
     let b = "";
     for(let i=0;i<n;i++){
       const m = 8 + Math.round(Math.sin(i/n*Math.PI)*14);
@@ -2797,6 +2827,7 @@
 
   // ===== Santa Claus y duendes (aparecen de vez en cuando) =====
   (function(){
+    if(document.documentElement.classList.contains("phone")) return;
     if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const SANTA = '<svg viewBox="0 0 260 96" xmlns="http://www.w3.org/2000/svg">\n  <g stroke="#7a4a1d" stroke-width="2" fill="none"><path d="M70 50C100 46 120 52 140 56"/><path d="M22 54C60 56 90 54 140 58"/></g>\n  <!-- reno -->\n  <g><ellipse cx="46" cy="52" rx="20" ry="11" fill="#9a5b25"/>\n   <circle cx="22" cy="40" r="9" fill="#9a5b25"/><circle cx="14" cy="42" r="3.5" fill="#e63946"/>\n   <path d="M20 32l-4-12m4 12l6-10m-6 10l-12-6" stroke="#6b3f1d" stroke-width="2.5" fill="none" stroke-linecap="round"/>\n   <path d="M34 60l-4 16M42 62l-2 15M56 62l2 15M64 60l5 14" stroke="#6b3f1d" stroke-width="4" stroke-linecap="round"/></g>\n  <!-- trineo -->\n  <path d="M130 56h96q-6 20-26 22H146q-18 0-16-22z" fill="#c8102e"/>\n  <path d="M122 86q40 8 110 0" stroke="#ffd23f" stroke-width="4" fill="none" stroke-linecap="round"/>\n  <path d="M122 86q-8 0-6-8" stroke="#ffd23f" stroke-width="4" fill="none" stroke-linecap="round"/>\n  <!-- santa -->\n  <circle cx="190" cy="34" r="11" fill="#f6c9a0"/>\n  <path d="M178 34q12 22 24 0q-2 16-12 18q-10-2-12-18z" fill="#fff"/>\n  <path d="M178 30q12-24 26-6l-4 6q-10-6-22 0z" fill="#c8102e"/>\n  <circle cx="205" cy="22" r="4.5" fill="#fff"/>\n  <rect x="176" y="46" width="28" height="14" rx="6" fill="#c8102e"/>\n  <rect x="140" y="30" width="30" height="28" rx="10" fill="#9a5b25"/><path d="M150 30q5-8 10 0" stroke="#6b3f1d" stroke-width="3" fill="none"/>\n  <circle cx="186" cy="32" r="1.8" fill="#1a1024"/><circle cx="194" cy="32" r="1.8" fill="#1a1024"/>\n</svg>';
     const ELVES = '<svg viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg">\n  <!-- mesa -->\n  <rect x="62" y="92" width="96" height="10" rx="3" fill="#8a5a2b"/>\n  <rect x="70" y="102" width="8" height="26" fill="#6b3f1d"/><rect x="142" y="102" width="8" height="26" fill="#6b3f1d"/>\n  <!-- juguete: robot que se arma por partes -->\n  <g>\n    <rect class="toy-p1" x="97" y="68" width="26" height="24" rx="3" fill="#4aa3ff"/>\n    <rect class="toy-p2" x="100" y="52" width="20" height="16" rx="3" fill="#ffd23f"/>\n    <g class="toy-p3"><rect x="88" y="70" width="8" height="18" rx="3" fill="#e63946"/><rect x="124" y="70" width="8" height="18" rx="3" fill="#e63946"/></g>\n    <g class="toy-p4"><circle cx="106" cy="59" r="2" fill="#1a1024"/><circle cx="114" cy="59" r="2" fill="#1a1024"/><path d="M110 52V44" stroke="#c8102e" stroke-width="2"/><circle cx="110" cy="42" r="3" fill="#c8102e"/></g>\n    <text class="toy-done" x="110" y="40" text-anchor="middle" font-size="22">✨</text>\n  </g>\n  <!-- duende izquierdo -->\n  <g>\n    <path d="M12 52L30 14L48 52z" fill="#14a050"/><rect x="12" y="49" width="36" height="7" rx="3" fill="#c8102e"/><circle cx="30" cy="12" r="4" fill="#fff"/>\n    <circle cx="30" cy="66" r="14" fill="#f6c9a0"/><circle cx="25" cy="64" r="2" fill="#1a1024"/><circle cx="35" cy="64" r="2" fill="#1a1024"/><path d="M25 71q5 4 10 0" stroke="#c8102e" stroke-width="2" fill="none"/>\n    <path d="M14 66l-6-4M46 66l6-4" stroke="#f6c9a0" stroke-width="0"/>\n    <rect x="16" y="80" width="28" height="30" rx="8" fill="#14a050"/><rect x="16" y="94" width="28" height="5" fill="#c8102e"/>\n    <path d="M22 110v14M38 110v14" stroke="#c8102e" stroke-width="6" stroke-linecap="round"/>\n    <g class="hammer"><rect x="44" y="64" width="26" height="5" rx="2" fill="#8a5a2b"/><rect x="64" y="58" width="12" height="16" rx="2" fill="#777"/></g>\n  </g>\n  <!-- duende derecho -->\n  <g>\n    <path d="M170 52L188 14L206 52z" fill="#c8102e"/><rect x="170" y="49" width="36" height="7" rx="3" fill="#14a050"/><circle cx="188" cy="12" r="4" fill="#fff"/>\n    <circle cx="188" cy="66" r="14" fill="#f6c9a0"/><circle cx="183" cy="64" r="2" fill="#1a1024"/><circle cx="193" cy="64" r="2" fill="#1a1024"/><path d="M183 71q5 4 10 0" stroke="#c8102e" stroke-width="2" fill="none"/>\n    <rect x="174" y="80" width="28" height="30" rx="8" fill="#c8102e"/><rect x="174" y="94" width="28" height="5" fill="#14a050"/>\n    <path d="M180 110v14M196 110v14" stroke="#14a050" stroke-width="6" stroke-linecap="round"/>\n    <g class="hammer b" transform="translate(220 0) scale(-1 1)"><rect x="44" y="64" width="26" height="5" rx="2" fill="#8a5a2b"/><rect x="64" y="58" width="12" height="16" rx="2" fill="#777"/></g>\n  </g>\n</svg>';
@@ -2861,7 +2892,7 @@
       '<g class="pen-ball"><g transform="translate(150 170) scale(.45)">'+BALL+'</g></g></svg>';
     const spinner = '<svg viewBox="0 0 300 150"><ellipse class="spin-shadow" cx="150" cy="132" rx="34" ry="6" fill="#000"/>'+
       '<g class="spin-wrap"><g transform="translate(150 66)"><g class="spin-ball"><g transform="scale(1.5)">'+BALL+'</g></g></g></g></svg>';
-    const pick = Math.floor(Math.random()*3);
+    const pick = document.documentElement.classList.contains("phone") ? 2 : Math.floor(Math.random()*3);
     const stage = document.getElementById("ld-stage");
     const factEl = document.getElementById("ld-fact");
     stage.innerHTML = pick === 0 ? penalty : pick === 1 ? spinner : '<svg viewBox="0 0 300 90"><g transform="translate(150 45)"><g class="spin-ball"><g transform="scale(1.6)">'+BALL+'</g></g></g></svg>';
